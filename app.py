@@ -12,7 +12,8 @@ db_connection = db.connect_to_database()
 
 @app.route('/')
 def root():
-    return render_template("main.j2")
+
+    return render_template("index.html")
 
 @app.route('/song-reviews')
 def song_reviews():
@@ -21,7 +22,21 @@ def song_reviews():
     cursor = db.execute_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
 
-    return render_template("reviews.j2", reviews=results)
+    return render_template("reviews.html", reviews=results)
+
+@app.route('/album-reviews')
+def album_reviews():
+
+    query = "SELECT * FROM Album_Reviews;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("reviews.html", reviews=results)
+
+@app.route('/post-review')
+def post_review():
+
+    return render_template("post_review.html")
 
 # Listener
 

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+
+<nav>
+    <ul>
+      <a class="action" href="{{ url_for('root') }}">Home</a>
+    </ul>
+  </nav>
+
+<h1>Browse Reviews</h1>
+
+<table>
+<thead>
+    <tr>
+        <!-- Iterate through each key in the first entry to get the column name -->
+        {% for key in reviews[0].keys() %}
+
+        <!-- Create a <th> tag with the key inside of it, this will be our header row -->
+        <th>{{ key }}</th>
+
+        <!-- End of this for loop -->
+        {% endfor %}
+    </tr>
+<tbody>
+
+    <!-- Now, iterate through every review in reviews -->
+    {% for review in reviews %}
+        <tr>
+            <!-- Then iterate through every key in the current review dictionary -->
+            {% for key in review.keys() %}
+
+                <!-- Create a <td> element with the value of that key in it -->
+                <td>{{review[key]}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
