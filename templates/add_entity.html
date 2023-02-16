@@ -7,6 +7,9 @@
     <ul>
       <a class="action" href="{{ url_for('root') }}">Home</a>
     </ul>
+    <ul>
+        <a class="action" href="{{ url_for(entity_name.lower() + 's') }}">Back to Browse</a>
+      </ul>
   </nav>
   <h1>{% block title %}Add a{% if entity_name[0] == "A" %}n{% endif %}
     {{ entity_name }} {% endblock %}
@@ -14,7 +17,7 @@
 {% endblock %}
 
 {% block content %}
-  <form method="post">
+  <form action="{{ url_for(entity_name.lower() + 's') }}" method="post">
     {% for key in entity_results[0].keys() %}
 
     <label for="{{ key }}">{{ key }}:</label>

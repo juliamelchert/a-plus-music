@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav>
+    <ul>
+      <a class="action" href="{{ url_for('root') }}">Home</a>
+    </ul>
+    <ul>
+        <a class="action" href="{{ url_for(entity_name.lower() + 's') }}">Back to Browse</a>
+      </ul>
+  </nav>
+  <h1>{% block title %}Edit {{ entity_name }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <form action="{{ url_for(entity_name.lower() + 's') }}" method="post">
+
+    {% for entity in entity_results %}
+        {% for key in entity.keys() %}
+            <label for="{{ key }}">{{ key }}:</label>
+            <input name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required><br>
+        {% endfor %}
+        <br>
+    {% endfor %}
+
+    <input type="submit" value="Save">
+  </form>
+
+  <hr>
+  <form action="{{ url_for('delete', entity_name=entity_name) }}" method="post">
+    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+  </form>
+{% endblock %}

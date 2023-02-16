@@ -6,13 +6,18 @@
 <nav>
     <ul>
       <a class="action" href="{{ url_for('root') }}">Home</a>
-      {% if entity_name == "Album Reviews" or entity_name == "Song Reviews" %}
+    </ul>
+    {% if entity_name == "Album Reviews" or entity_name == "Song Reviews" %}
+      <ul>
         <a class="action" href="{{ url_for('add_review', review_type=(entity_name.split()[0]).lower()) }}">Add a Review</a>
+      </ul>
       {% else %}
+      <ul>
         <a class="action" href="{{ url_for('add_entity', entity_name=(entity_name.split()[0][:-1]).lower()) }}">Add a{% if entity_name[0] == "A" %}n{% endif %}
           {{ entity_name[:-1] }}</a>
-      {% endif %} 
-    </ul>
+      </ul>
+    {% endif %} 
+
 </nav>
 
 <h1>{% block title %}Browse {{ entity_name }}{% endblock %}</h1>{% endblock %}
@@ -34,7 +39,29 @@
         {% for entity in entity_results %}
             <tr>
                 {% for key in entity.keys() %}
-                    <td>{{entity[key]}}</td>
+                    <td>{{ entity[key] }}</td>
+                
+                    {% if loop.last %}
+                    <td>
+                        {% if entity_name == "Album Reviews" %}
+                            <a class="action" href="{{ url_for('edit', entity_name='album_reviews', entity_id=entity['album_review_id']) }}">
+                                <button>Edit</button>
+                            </a>
+                        {% elif entity_name == "Song Reviews" %}
+                            <a class="action" href="{{ url_for('edit', entity_name='song_reviews', entity_id=entity['song_review_id']) }}">
+                                <button>Edit</button>
+                            </a>
+                        {% elif entity_name == "Albums_Songs" %}
+                            <a class="action" href="{{ url_for('edit', entity_name='albums_songs', entity_id=entity['album_song_id']) }}">
+                                <button>Edit</button>
+                            </a>
+                        {% else %}
+                            <a class="action" href="{{ url_for('edit', entity_name=(entity_name.split()[0][:-1]).lower(), entity_id=entity[((entity_name.split()[0][:-1]).lower()) + '_id']) }}">
+                                <button>Edit</button>
+                            </a>
+                        {% endif %}
+                    </td>
+                    {% endif %}
                 {% endfor %}
             </tr>
         {% endfor %}
