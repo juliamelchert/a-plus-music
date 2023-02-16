@@ -4,8 +4,8 @@ SET AUTOCOMMIT = 0;
 -- EDITS: 
 --   - Artists name changed to NOT NULL
 --   - Song_Reviews and Album_Reviews review bodies changed to DEFAULT NULL
---   - 
---   - 
+--   - ON DELETE CASCADES added
+--   - added default 0.0 values to avg attributes
 
 ----- TABLE CREATION -----
 
@@ -25,7 +25,7 @@ CREATE OR REPLACE TABLE Artists (
 CREATE OR REPLACE TABLE Albums (
     album_id int NOT NULL AUTO_INCREMENT,
     artist_id int NOT NULL,
-    avg_album_rating decimal(2, 1) NOT NULL,
+    avg_album_rating decimal(2, 1) NOT NULL DEFAULT 0.0,
     album_title varchar(125) NOT NULL,
     album_genre varchar(24) NOT NULL,
     PRIMARY KEY (album_id),
@@ -35,7 +35,7 @@ CREATE OR REPLACE TABLE Albums (
 CREATE OR REPLACE TABLE Songs (
     song_id int NOT NULL AUTO_INCREMENT,
     artist_id int NOT NULL,
-    avg_song_rating decimal(2, 1) NOT NULL,
+    avg_song_rating decimal(2, 1) NOT NULL DEFAULT 0.0,
     song_title varchar(125) NOT NULL,
     song_genre varchar(24) NOT NULL,
     PRIMARY KEY (song_id),
@@ -48,8 +48,8 @@ CREATE OR REPLACE TABLE Song_Reviews (
     song_id int NOT NULL,
     song_rating tinyint NOT NULL,
     song_review_body text DEFAULT NULL,
-    FOREIGN KEY (user_id) REFERENCES Users(user_id),
-    FOREIGN KEY (song_id) REFERENCES Songs(song_id),
+    FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE,
+    FOREIGN KEY (song_id) REFERENCES Songs(song_id) ON DELETE CASCADE,
     PRIMARY KEY (song_review_id)
 );
 

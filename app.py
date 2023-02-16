@@ -22,7 +22,7 @@ def song_reviews():
     cursor = db.execute_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
 
-    return render_template("reviews.html", reviews=results)
+    return render_template("entity.html", entity_results=results, entity_name="Song Reviews")
 
 @app.route('/album-reviews')
 def album_reviews():
@@ -31,12 +31,75 @@ def album_reviews():
     cursor = db.execute_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
 
-    return render_template("reviews.html", reviews=results)
+    return render_template("entity.html", entity_results=results, entity_name="Album Reviews")
 
-@app.route('/post-review')
-def post_review():
+@app.route('/songs')
+def songs():
 
-    return render_template("post_review.html")
+    query = "SELECT * FROM Songs;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("entity.html", entity_results=results, entity_name="Songs")
+
+@app.route('/albums')
+def albums():
+
+    query = "SELECT * FROM Albums;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("entity.html", entity_results=results, entity_name="Albums")
+
+@app.route('/albums-songs')
+def albums_songs():
+
+    query = "SELECT * FROM Albums_Songs;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("entity.html", entity_results=results, entity_name="Albums_Songs")
+
+@app.route('/artists')
+def artists():
+
+    query = "SELECT * FROM Artists;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("entity.html", entity_results=results, entity_name="Artists")
+
+@app.route('/users')
+def users():
+
+    query = "SELECT * FROM Users;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+    print(f"Results: {results}")
+
+    return render_template("entity.html", entity_results=results, entity_name="Users")
+
+@app.route('/add-<review_type>-review', methods=['GET', 'POST'])
+def add_review(review_type):
+
+    review_type = review_type.capitalize()
+
+    query = f"SELECT {review_type.lower()}_title FROM {review_type}s;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("add_review.html", media_type=review_type, media_list=results)
+
+@app.route('/add-<entity_name>', methods=['GET', 'POST'])
+def add_entity(entity_name):
+
+    entity_name = entity_name.capitalize()
+
+    query = f"SELECT * FROM {entity_name}s;"
+    cursor = db.execute_query(db_connection=db_connection, query=query)
+    results = cursor.fetchall()
+
+    return render_template("add_entity.html", entity_results=results, entity_name=entity_name)
 
 # Listener
 

@@ -1,23 +1,20 @@
 <!DOCTYPE html>
 
-<nav>
-    <ul>
-        <a class="action" href="{{ url_for('song_reviews') }}">View Song Reviews</a>
-        <a class="action" href="{{ url_for('album_reviews') }}">View Album Reviews</a>
-        <a class="action" href="{{ url_for('post_review') }}">Leave a Review</a>
-    </ul>
-  </nav>
+{% extends 'base.html' %}
 
-<html>
-    <head>
-        <title>A+ Music</title>
-    </head>
-        <body>
-            <h1>Home</h1>
-            <h3>Find your next favorite song with ease.</h3>
-            <p>Our Top Rated Albums:</p>
-            <p>A B C</p>
-            <p>Our Top Rated Songs:</p>
-            <p>A B C</p>
-        </body>
-</html>
+{% block header %}
+  <h1>{% block title %}Home{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+    <p>Links to each entity page:</p>
+    <ul>
+    <li><a class="action" href="{{ url_for('song_reviews') }}">Song Reviews</a></li>
+    <li><a class="action" href="{{ url_for('album_reviews') }}">Album Reviews</a></li>
+    <li><a class="action" href="{{ url_for('songs') }}">Songs</a></li>
+    <li><a class="action" href="{{ url_for('albums') }}">Albums</a></li>
+    <li><a class="action" href="{{ url_for('artists') }}">Artists</a></li>
+    <li><a class="action" href="{{ url_for('users') }}">Users</a></li>
+    <li><a class="action" href="{{ url_for('albums_songs') }}">Albums_Songs</a></li>
+    </ul>
+{% endblock %}

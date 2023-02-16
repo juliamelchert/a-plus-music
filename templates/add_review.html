@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav>
+    <ul>
+      <a class="action" href="{{ url_for('root') }}">Home</a>
+    </ul>
+  </nav>
+  <h1>{% block title %}Add a{% if media_type == 'Album' %}n{% endif %}
+    {{ media_type }} Review{% endblock %}
+  </h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+
+    <select name="media_title" id="media_title" required>
+      {% for item in media_list %}
+        {% for key in item.keys() %}
+          <option value="media_title">{{ item[key] }}</option>
+        {% endfor %}
+      {% endfor %}
+    </select>
+
+    <br><label for="rating">Rating:</label>
+
+    <select name="rating" id="rating" required>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+    </select>
+
+    <br><label for="review_body">Review Body</label><br>
+    <input name="review_body" id="review_body" required>
+
+    <br><input type="submit" value="Add">
+  </form>
+{% endblock %}

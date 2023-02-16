@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+<nav>
+    <ul>
+      <a class="action" href="{{ url_for('root') }}">Home</a>
+      {% if entity_name == "Album Reviews" or entity_name == "Song Reviews" %}
+        <a class="action" href="{{ url_for('add_review', review_type=(entity_name.split()[0]).lower()) }}">Add a Review</a>
+      {% else %}
+        <a class="action" href="{{ url_for('add_entity', entity_name=(entity_name.split()[0][:-1]).lower()) }}">Add a{% if entity_name[0] == "A" %}n{% endif %}
+          {{ entity_name[:-1] }}</a>
+      {% endif %} 
+    </ul>
+</nav>
+
+<h1>{% block title %}Browse {{ entity_name }}{% endblock %}</h1>{% endblock %}
+
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <!-- Iterate through each key in the first entry to get the column name -->
+            {% for key in entity_results[0].keys() %}
+
+                <th>{{ key }}</th>
+            
+            {% endfor %}
+        </tr>
+
+    <tbody>
+        {% for entity in entity_results %}
+            <tr>
+                {% for key in entity.keys() %}
+                    <td>{{entity[key]}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+
+{% endblock %}

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <nav>
+    <ul>
+      <a class="action" href="{{ url_for('root') }}">Home</a>
+    </ul>
+  </nav>
+  <h1>{% block title %}Add a{% if entity_name[0] == "A" %}n{% endif %}
+    {{ entity_name }} {% endblock %}
+  </h1>
+{% endblock %}
+
+{% block content %}
+  <form method="post">
+    {% for key in entity_results[0].keys() %}
+
+    <label for="{{ key }}">{{ key }}:</label>
+    <input name="{{ key }}" id="{{ key }}" required><br>
+    
+    {% endfor %}
+
+    <br><input type="submit" value="Add">
+
+  </form>
+{% endblock %}
