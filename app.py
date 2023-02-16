@@ -12,7 +12,6 @@ db_connection = db.connect_to_database()
 
 @app.route('/')
 def root():
-
     return render_template("index.html")
 
 @app.route('/song-reviews', methods=['GET', 'POST'])
@@ -75,7 +74,6 @@ def users():
     query = "SELECT * FROM Users;"
     cursor = db.execute_query(db_connection=db_connection, query=query)
     results = cursor.fetchall()
-    print(f"Results: {results}")
 
     return render_template("entity.html", entity_results=results, entity_name="Users")
 

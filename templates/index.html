@@ -3,18 +3,21 @@
 {% extends 'base.html' %}
 
 {% block header %}
+  <nav></nav>
   <h1>{% block title %}Home{% endblock %}</h1>
 {% endblock %}
 
 {% block content %}
     <p>Links to each entity page:</p>
-    <ul>
-    <li><a class="action" href="{{ url_for('song_reviews') }}">Song Reviews</a></li>
-    <li><a class="action" href="{{ url_for('album_reviews') }}">Album Reviews</a></li>
-    <li><a class="action" href="{{ url_for('songs') }}">Songs</a></li>
-    <li><a class="action" href="{{ url_for('albums') }}">Albums</a></li>
-    <li><a class="action" href="{{ url_for('artists') }}">Artists</a></li>
-    <li><a class="action" href="{{ url_for('users') }}">Users</a></li>
-    <li><a class="action" href="{{ url_for('albums_songs') }}">Albums_Songs</a></li>
-    </ul>
+    <div id="main_list">
+      <ul>
+        <li><a class="action" href="{{ url_for('song_reviews') }}">Song Reviews</a></li>
+        <li><a class="action" href="{{ url_for('album_reviews') }}">Album Reviews</a></li>
+        <li><a class="action" href="{{ url_for('songs') }}">Songs</a></li>
+        <li><a class="action" href="{{ url_for('albums') }}">Albums</a></li>
+        <li><a class="action" href="{{ url_for('artists') }}">Artists</a></li>
+        <li><a class="action" href="{{ url_for('users') }}">Users</a></li>
+        <li><a class="action" href="{{ url_for('albums_songs') }}">Albums_Songs</a></li>
+      </ul>
+    </div>
 {% endblock %}
