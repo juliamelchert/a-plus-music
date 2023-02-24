@@ -63,10 +63,10 @@ def albums():
 @app.route('/albums-songs', methods=['GET', 'POST'])
 def albums_songs():
 
-    query = ("SELECT Albums_Songs.album_song_id, Albums.album_title AS Album, Songs.song_title AS Song FROM Albums_Songs"
+    query = ("SELECT Albums_Songs.albums_song_id AS 'Album Song ID', Albums.album_title AS Album, Songs.song_title AS Song FROM Albums_Songs"
              " LEFT JOIN Albums ON Albums.album_id = Albums_Songs.album_id"
              " LEFT JOIN Songs ON Songs.song_id = Albums_Songs.song_id"
-             " ORDER BY Albums_Songs.album_song_id ASC;")
+             " ORDER BY Albums_Songs.albums_song_id ASC;")
     cursor = db.execute_query(query=query)
     results = cursor.fetchall()
 
@@ -113,7 +113,19 @@ def add_entity(entity_name):
     cursor = db.execute_query(query=query)
     results = cursor.fetchall()
 
-    return render_template("add_entity.html", entity_results=results, entity_name=entity_name)
+    if entity_name == "Song":
+        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
+        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
+        return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=album_results, entity_name=entity_name.lower())
+    elif entity_name == "Albums_Song":
+        song_results = db.execute_query("SELECT song_title FROM Songs;").fetchall()
+        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
+        return render_template("add_entity.html", entity_results=results, artist_fk_data=song_results, album_fk_data=album_results, entity_name=entity_name.lower())
+    elif entity_name == "Album":
+        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
+        return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
+    else:
+        return render_template("add_entity.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
 
 @app.route('/edit/<entity_name>/<entity_id>', methods=['GET', 'POST'])
 def edit(entity_name, entity_id):
@@ -126,7 +138,7 @@ def edit(entity_name, entity_id):
         entity_name = entity_name.capitalize()
 
     if entity_name == "Albums_songs":
-        query = f"SELECT * FROM Albums_Songs WHERE album_song_id = {entity_id};"
+        query = f"SELECT * FROM Albums_Songs WHERE albums_song_id = {entity_id};"
         entity_name = "Albums_Song"
     else:
         query = f"SELECT * FROM {entity_name}s WHERE {entity_name.lower()}_id = {entity_id};"

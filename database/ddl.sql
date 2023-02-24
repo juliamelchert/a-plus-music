@@ -67,13 +67,13 @@ CREATE OR REPLACE TABLE Album_Reviews (
 
 -- Create Albums_Songs intersection table
 CREATE OR REPLACE TABLE Albums_Songs (
-    album_song_id int NOT NULL AUTO_INCREMENT,
+    albums_song_id int NOT NULL AUTO_INCREMENT,
     album_id int NOT NULL,
     song_id int NOT NULL,
     FOREIGN KEY (album_id) REFERENCES Albums(album_id) ON DELETE CASCADE,  -- Delete reference if Album doesn't exist
     FOREIGN KEY (song_id) REFERENCES Songs(song_id) ON DELETE CASCADE,  -- Delete reference if Song doesn't exist
     CONSTRAINT FK_pair UNIQUE (album_id, song_id),  -- don't duplicate FK pairs
-    PRIMARY KEY (album_song_id)
+    PRIMARY KEY (albums_song_id)
 );
 
 -- DESCRIBE Albums;

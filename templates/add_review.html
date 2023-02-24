@@ -3,8 +3,8 @@
 {% extends 'base.html' %}
 
 {% block header %}
-  <h1>{% block title %}Add a{% if media_type == 'Album' %}n{% endif %}
-    {{ media_type }} Review{% endblock %}
+  <h1>{% block title %}Add a{% if media_type == 'album' %}n{% endif %}
+    {{ media_type.capitalize() }} Review{% endblock %}
   </h1>
 {% endblock %}
 
