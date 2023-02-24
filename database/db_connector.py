@@ -18,7 +18,7 @@ def connect_to_database(host = host, user = user, passwd = passwd, db = db):
     db_connection = MySQLdb.connect(host,user,passwd,db)
     return db_connection
 
-def execute_query(db_connection = None, query = None, query_params = ()):
+def execute_query(query = None, query_params = ()):
     '''
     executes a given SQL query on the given db connection and returns a Cursor object
     db_connection: a MySQLdb connection object created by connect_to_database()
@@ -26,6 +26,7 @@ def execute_query(db_connection = None, query = None, query_params = ()):
     returns: A Cursor object as specified at https://www.python.org/dev/peps/pep-0249/#cursor-objects.
     You need to run .fetchall() or .fetchone() on that object to actually acccess the results.
     '''
+    db_connection = connect_to_database()
 
     if db_connection is None:
         print("No connection to the database found! Have you called connect_to_database() first?")
@@ -36,6 +37,7 @@ def execute_query(db_connection = None, query = None, query_params = ()):
         return None
 
     print("Executing %s with %s" % (query, query_params));
+
     # Create a cursor to execute query. Why? Because apparently they optimize execution by retaining a reference according to PEP0249
     cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
@@ -51,13 +53,3 @@ def execute_query(db_connection = None, query = None, query_params = ()):
     # changes will be committed!
     db_connection.commit();
     return cursor
-
-if __name__ == '__main__':
-    print("Executing a sample query on the database using the credentials from db_credentials.py")
-    db = connect_to_database()
-    query = "SELECT * from bsg_people;"
-    results = execute_query(db, query);
-    print("Printing results of %s" % query)
-
-    for r in results.fetchall():
-        print(r)

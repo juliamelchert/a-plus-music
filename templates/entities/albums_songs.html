@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Browse Albums_Songs{% endblock %}</h1>{% endblock %}
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <!-- Iterate through each key in the first entry to get the column name -->
+            {% for key in albums_songs[0].keys() %}
+                {% if key[-3:] != "_id" %}
+                    <th>{{ key }}</th>
+                {% endif %}
+            {% endfor %}
+
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+    <tbody>
+        {% for albums_song in albums_songs %}
+            <tr>
+                {% for key in albums_song.keys() %}
+                    {% if key[-3:] != "_id" %}
+                        <td>{{ albums_song[key] }}</td>
+                    {% endif %}
+                
+                    {% if loop.last %}
+                        <td>
+                            <a class="action" href="{{ url_for('edit', entity_name='albums_songs', entity_id=albums_song['album_song_id']) }}">
+                                <button>Edit</button>
+                            </a>
+                        </td>
+                        <td>
+                            <form action="{{ url_for('delete', entity_name='albums_song') }}" method="post">
+                                <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                            </form>
+                        </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='albums_song') }}">Add an Albums_Song</a>
+
+
+{% endblock %}

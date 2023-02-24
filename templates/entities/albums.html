@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Browse Albums{% endblock %}</h1>{% endblock %}
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <!-- Getting column names -->
+            {% for key in albums[0].keys() %}
+                {% if key[-3:] != "_id" %}
+                    <th>{{ key }}</th>
+                {% endif %}
+            {% endfor %}
+
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+    <tbody>
+        {% for album in albums %}
+            <tr>
+                {% for key in album.keys() %}
+                    {% if key[-3:] != "_id" %}
+                        <td>{{ album[key] }}</td>
+                    {% endif %}
+                
+                    {% if loop.last %}
+                        
+                            <td>
+                                <a class="action" href="{{ url_for('edit', entity_name='album', entity_id=album['album_id']) }}">
+                                    <button>Edit</button>
+                                </a>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('delete', entity_name='album') }}" method="post">
+                                    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                                </form>
+                            </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='album') }}">Add an Album</a>
+
+{% endblock %}

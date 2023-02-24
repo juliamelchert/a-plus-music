@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+    <h1>{% block title %}Browse Artists{% endblock %}</h1>{% endblock %}
+{% block content %}
+
+<table>
+    <thead>
+        <tr>
+            <!-- Getting column names -->
+            {% for key in artists[0].keys() %}
+                {% if key[-3:] != "_id" %}
+                    <th>{{ key }}</th>
+                {% endif %}
+            {% endfor %}
+
+            <th>Edit</th>
+            <th>Delete</th>
+        </tr>
+
+    <tbody>
+        {% for artist in artists %}
+            <tr>
+                {% for key in artist.keys() %}
+                    {% if key[-3:] != "_id" %}
+                        <td>{{ artist[key] }}</td>
+                    {% endif %}
+                
+                    {% if loop.last %}
+                        
+                            <td>
+                                <a class="action" href="{{ url_for('edit', entity_name='artist', entity_id=artist['artist_id']) }}">
+                                    <button>Edit</button>
+                                </a>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('delete', entity_name='artist') }}" method="post">
+                                    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                                </form>
+                            </td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+        {% endfor %}
+</table>
+
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='artist') }}">Add an Artist</a>
+
+{% endblock %}

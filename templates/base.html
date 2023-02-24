@@ -6,6 +6,32 @@
 <section class="content">
 
     <header>
+        <nav>
+            <ul>
+                <a class="action" href="{{ url_for('root') }}">Home</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('song_reviews') }}">Song Reviews</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('album_reviews') }}">Album Reviews</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('songs') }}">Songs</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('albums') }}">Albums</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('artists') }}">Artists</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('users') }}">Users</a>
+            </ul>
+            <ul>
+                <a class="action" href="{{ url_for('albums_songs') }}">Albums_Songs</a>
+            </ul>
+        </nav>
         {% block header %}{% endblock %}
     </header>
 
