@@ -71,7 +71,7 @@ ul {
   text-align: left;
 }
 
-a .back_btn, a .add_btn {
+.back_btn, .add_btn {
   padding-top: 5px;
 }
 

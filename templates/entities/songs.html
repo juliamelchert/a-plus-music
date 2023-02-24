@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Songs{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Songs are the registered songs in our database that Users can leave reviews on.</p>
 
 <table>
     <thead>
@@ -45,6 +48,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='song') }}">Add a Song</a>
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='song') }}"><button>Add a Song</button></a>
 
 {% endblock %}

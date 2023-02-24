@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Albums_Songs{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Albums_Songs facilitate the many-to-many relationship between Albums and Songs.</p>
 
 <table>
     <thead>
@@ -43,7 +46,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='albums_song') }}">Add an Albums_Song</a>
-
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='albums_song') }}"><button>Add an Albums_Song</button></a>
 
 {% endblock %}

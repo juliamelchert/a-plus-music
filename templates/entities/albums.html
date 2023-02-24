@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Albums{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Albums are the registered albums in our database that Users can leave reviews on.</p>
 
 <table>
     <thead>
@@ -46,6 +49,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='album') }}">Add an Album</a>
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='album') }}"><button>Add an Album</button></a>
 
 {% endblock %}

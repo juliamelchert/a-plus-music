@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Artists{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Artists are people who originally performed the Songs and Albums in our database.</p>
 
 <table>
     <thead>
@@ -46,6 +49,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='artist') }}">Add an Artist</a>
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='artist') }}"><button>Add an Artist</button></a>
 
 {% endblock %}

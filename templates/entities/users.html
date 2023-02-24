@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Users{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Users are people who have accounts with A+ Music and may have left reviews.</p>
 
 <table>
     <thead>
@@ -46,6 +49,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='user') }}">Add a User</a>
+<a class="add_btn" href="{{ url_for('add_entity', entity_name='user') }}"><button>Add a User</button></a>
 
 {% endblock %}

@@ -4,7 +4,10 @@
 
 {% block header %}
     <h1>{% block title %}Browse Song Reviews{% endblock %}</h1>{% endblock %}
+
 {% block content %}
+
+<p>Song Reviews are left by Users on any of the Songs registered in our database.</p>
 
 <table>
     <thead>
@@ -45,6 +48,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_review', review_type='song') }}">Add a Review</a>
+<a class="add_btn" href="{{ url_for('add_review', review_type='song') }}"><button>Add a Song Review</button></a>
 
 {% endblock %}
