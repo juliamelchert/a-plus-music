@@ -1,12 +1,10 @@
-from flask import Flask, render_template, redirect, url_for
+from flask import Flask, render_template, redirect, url_for, request, flash
 import database.db_connector as db
 import os
 
 # Configuration
 
 app = Flask(__name__)
-
-#db_connection = db.connect_to_database()
 
 # Routes 
 
@@ -109,8 +107,30 @@ def add_entity(entity_name):
     else:
         return render_template("add_entity.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
 
-@app.route('/edit/<entity_name>/<entity_id>', methods=['GET', 'POST'])
+@app.route('/edit/<entity_name>/<int:entity_id>', methods=('GET', 'POST'))
 def edit(entity_name, entity_id):
+    print(f"Request method: {request.method}")
+    # This section is adapted from the official Flask tutorial (link)
+    if request.method == "POST":
+        if entity_name == "user":
+            username = request.form['username']
+            email = request.form['email']
+            id = int(entity_id)
+            error = None
+
+            print(f"\n\nUsername: {username}, email: {email}, ID: {id}, typeOf username: {type(username)}, typeOf email: {type(email)} typeOf ID: {type(id)}\n\n")
+
+            if not username:
+                error = "Username is required."
+
+            if not email:
+                error = "Email is required."
+
+            if error is not None:
+                flash(error)
+            else:
+                db.execute_query(f'UPDATE Users SET username = %s, email = %s WHERE user_id = %s', (username, email, int(entity_id)))
+                return redirect(url_for(entity_name.lower() + "s"))
 
     if entity_name == "album_review":
         entity_name = "Album_Review"

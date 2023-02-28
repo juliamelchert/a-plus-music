@@ -7,7 +7,7 @@
 {% endblock %}
 
 {% block content %}
-  <form action="{{ url_for(entity_name.lower() + 's') }}" method="post">
+  <form method="post">
 
     {% for entity in entity_results %}
         {% for key in entity.keys() %}
