@@ -109,16 +109,13 @@ def add_entity(entity_name):
 
 @app.route('/edit/<entity_name>/<int:entity_id>', methods=('GET', 'POST'))
 def edit(entity_name, entity_id):
-    print(f"Request method: {request.method}")
-    # This section is adapted from the official Flask tutorial (link)
+
+    # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
     if request.method == "POST":
         if entity_name == "user":
             username = request.form['username']
             email = request.form['email']
-            id = int(entity_id)
             error = None
-
-            print(f"\n\nUsername: {username}, email: {email}, ID: {id}, typeOf username: {type(username)}, typeOf email: {type(email)} typeOf ID: {type(id)}\n\n")
 
             if not username:
                 error = "Username is required."
@@ -129,7 +126,7 @@ def edit(entity_name, entity_id):
             if error is not None:
                 flash(error)
             else:
-                db.execute_query(f'UPDATE Users SET username = %s, email = %s WHERE user_id = %s', (username, email, int(entity_id)))
+                db.execute_query(f'UPDATE Users SET username = %s, email = %s WHERE user_id = %s', (username, email, entity_id))
                 return redirect(url_for(entity_name.lower() + "s"))
 
     if entity_name == "album_review":
