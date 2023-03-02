@@ -15,7 +15,7 @@ def root():
 @app.route('/song-reviews', methods=['GET', 'POST'])
 def song_reviews():
 
-    results = db.execute_query(("SELECT song_review_id, Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+    results = db.execute_query(("SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                                 " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                                 " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                                 " ORDER BY Songs.song_title ASC;")).fetchall()
@@ -25,7 +25,7 @@ def song_reviews():
 @app.route('/album-reviews', methods=['GET', 'POST'])
 def album_reviews():
 
-    results = db.execute_query(("SELECT album_review_id, Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
+    results = db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
                                 " JOIN Users ON Users.user_id = Album_Reviews.user_id"
                                 " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                                 " ORDER BY Albums.album_title ASC;")).fetchall()
@@ -35,7 +35,7 @@ def album_reviews():
 @app.route('/songs', methods=['GET', 'POST'])
 def songs():
 
-    results = db.execute_query(("SELECT song_id, Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
+    results = db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
                                " JOIN Artists ON Artists.artist_id = Songs.artist_id"
                                " ORDER BY Songs.song_title ASC;")).fetchall()
 
@@ -44,7 +44,7 @@ def songs():
 @app.route('/albums', methods=['GET', 'POST'])
 def albums():
 
-    results = db.execute_query(("SELECT album_id, Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
+    results = db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
                                 " JOIN Artists ON Artists.artist_id = Albums.artist_id"
                                 " ORDER BY Albums.album_title ASC;")).fetchall()
 
@@ -63,7 +63,7 @@ def albums_songs():
 @app.route('/artists', methods=['GET', 'POST'])
 def artists():
 
-    results = db.execute_query(("SELECT artist_id, Artists.name AS Artist FROM Artists"
+    results = db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
                                " ORDER BY Artists.name ASC;")).fetchall()
     
     return render_template("entities/artists.html", artists=results)
@@ -71,7 +71,7 @@ def artists():
 @app.route('/users', methods=['GET', 'POST'])
 def users():
 
-    results = db.execute_query(("SELECT user_id, username AS User, email AS 'E-mail' FROM Users"
+    results = db.execute_query(("SELECT Users.user_id AS 'User ID', username AS User, email AS 'E-mail' FROM Users"
                                 " ORDER BY username ASC;")).fetchall()
 
     return render_template("entities/users.html", users=results)
@@ -90,19 +90,9 @@ def add_entity(entity_name):
         if entity_name == "user":
             username = request.form['username']
             email = request.form['email']
-            error = None
 
-            if not username:
-                error = "Username is required."
-
-            if not email:
-                error = "Email is required."
-
-            if error is not None:
-                flash(error)
-            else:
-                db.execute_query(f'INSERT INTO Users (username, email) VALUES (%s, %s)', (username, email))
-                return redirect(url_for(entity_name.lower() + "s"))
+            db.execute_query(f'INSERT INTO Users (username, email) VALUES (%s, %s)', (username, email))
+            return redirect(url_for(entity_name.lower() + "s"))
 
     if entity_name == "albums_song":
         entity_name = "Albums_Song"

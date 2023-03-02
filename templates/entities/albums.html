@@ -14,9 +14,7 @@
         <tr>
             <!-- Getting column names -->
             {% for key in albums[0].keys() %}
-                {% if key[-3:] != "_id" %}
-                    <th>{{ key }}</th>
-                {% endif %}
+                <th>{{ key }}</th>
             {% endfor %}
 
             <th>Edit</th>
@@ -27,19 +25,17 @@
         {% for album in albums %}
             <tr>
                 {% for key in album.keys() %}
-                    {% if key[-3:] != "_id" %}
-                        <td>{{ album[key] }}</td>
-                    {% endif %}
+                    <td>{{ album[key] }}</td>
                 
                     {% if loop.last %}
                         
                             <td>
-                                <a class="action" href="{{ url_for('edit', entity_name='album', entity_id=album['album_id']) }}">
+                                <a class="action" href="{{ url_for('edit', entity_name='album', entity_id=album['Album ID']) }}">
                                     <button>Edit</button>
                                 </a>
                             </td>
                             <td>
-                                <form action="{{ url_for('delete', entity_name='album', entity_id=album['album_id']) }}" method="post">
+                                <form action="{{ url_for('delete', entity_name='album', entity_id=album['Album ID']) }}" method="post">
                                     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
                                 </form>
                             </td>

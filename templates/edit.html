@@ -11,8 +11,15 @@
 
     {% for entity in entity_results %}
         {% for key in entity.keys() %}
+          {% if key[-3:] != "_id" and entity_name != "Albums_Song" %}
+            <label for="{{ key }}">{{ key }}:</label>
+            <input name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required><br>
+          {% elif entity_name == "Albums_Song" %}
+            {% if key != "albums_song_id" %}
               <label for="{{ key }}">{{ key }}:</label>
               <input name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required><br>
+            {% endif %}
+          {% endif %}
         {% endfor %}
         <br>
     {% endfor %}

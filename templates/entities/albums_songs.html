@@ -25,9 +25,7 @@
         {% for albums_song in albums_songs %}
             <tr>
                 {% for key in albums_song.keys() %}
-                    {% if key[-3:] != "_id" %}
-                        <td>{{ albums_song[key] }}</td>
-                    {% endif %}
+                    <td>{{ albums_song[key] }}</td>
                 
                     {% if loop.last %}
                         <td>
