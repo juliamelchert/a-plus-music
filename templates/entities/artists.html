@@ -39,7 +39,7 @@
                                 </a>
                             </td>
                             <td>
-                                <form action="{{ url_for('delete', entity_name='artist') }}" method="post">
+                                <form action="{{ url_for('delete', entity_name='artist', entity_id=artist['artist_id']) }}" method="post">
                                     <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
                                 </form>
                             </td>

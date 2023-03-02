@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block content %}
-  <form action="{{ url_for(entity_name + 's') }}" method="post">
+  <form method="post">
     
     <!-- Create drop-down menus for entities that have foreign keys -->
     {% if entity_name == 'album' or entity_name == 'song' or entity_name == 'albums_song' %}

@@ -10,7 +10,7 @@
 
 {% block content %}
 
-  <form action="{{ url_for(media_type.lower() + '_reviews') }}" method="post">
+  <form method="post">
 
     <select name="media_title" id="media_title" required>
       {% for item in media_list %}

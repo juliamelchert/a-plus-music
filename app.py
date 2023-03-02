@@ -86,6 +86,24 @@ def add_review(review_type):
 @app.route('/add/<entity_name>', methods=['GET', 'POST'])
 def add_entity(entity_name):
 
+    if request.method == "POST":
+        if entity_name == "user":
+            username = request.form['username']
+            email = request.form['email']
+            error = None
+
+            if not username:
+                error = "Username is required."
+
+            if not email:
+                error = "Email is required."
+
+            if error is not None:
+                flash(error)
+            else:
+                db.execute_query(f'INSERT INTO Users (username, email) VALUES (%s, %s)', (username, email))
+                return redirect(url_for(entity_name.lower() + "s"))
+
     if entity_name == "albums_song":
         entity_name = "Albums_Song"
     else:
@@ -147,15 +165,20 @@ def edit(entity_name, entity_id):
     return render_template("edit.html", entity_results=results, entity_name=entity_name)
 
 
-@app.route('/delete/<entity_name>', methods=['GET', 'POST'])
-def delete(entity_name):
+@app.route('/delete/<entity_name>/<int:entity_id>', methods=['GET', 'POST'])
+def delete(entity_name, entity_id):
 
-    print(f"Deleting a {entity_name.capitalize()}")
+    print(f"Deleting a {entity_name}")
+    if request.method == "POST":
+        if entity_name == "user":
+            db.execute_query(f'DELETE FROM Users WHERE user_id = %s', [entity_id])
+            return redirect(url_for(entity_name.lower() + "s"))
+
 
     return redirect(url_for(entity_name.lower() + 's'))
 
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58765)) 
+    port = int(os.environ.get('PORT', 58766)) 
     app.run(port=port, debug=True) 
