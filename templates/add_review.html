@@ -12,10 +12,20 @@
 
   <form method="post">
 
+    <label for="media">{% if media_type == 'album' %}Album{% else %}Song{% endif %}:</label>
     <select name="media_title" id="media_title" required>
       {% for item in media_list %}
         {% for key in item.keys() %}
           <option value="media_title">{{ item[key] }}</option>
+        {% endfor %}
+      {% endfor %}
+    </select>
+
+    <br><label for="user">User:</label>
+    <select name="usernames" id="usernames" required>
+      {% for item in users %}
+        {% for key in item.keys() %}
+          <option value="usernames">{{ item[key] }}</option>
         {% endfor %}
       {% endfor %}
     </select>

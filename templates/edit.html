@@ -17,7 +17,7 @@
       {% if loop.first %}
 
         <!-- Create drop-down menus for entities that have foreign keys -->
-        {% if entity_name == 'album' or entity_name == 'song' or entity_name == 'albums_song' %}
+        {% if entity_name == 'album' or entity_name == 'song' or entity_name == 'albums_song' or entity_name[-6:] == 'review' %}
           <!-- Add artist drop-down selection when adding an album or song -->  
           {% if entity_name == 'album' or entity_name == 'song' %}
             <label for="artist_fk_data">Artist:</label>
@@ -65,9 +65,71 @@
                 {% endif %}
               {% endfor %}
             </select><br>
+
+            <!-- Add album drop-down selection when adding an album_review -->
+            {% elif entity_name == 'album_review' %}
+            <label for="album_fk">Album:</label>
+            <select name="album_fk_data" id="album-fk-data" required>
+              {% for item in album_fk_data %}
+                {% if loop.first %}
+                  <option value="{{ current_album }}">{{ current_album }}</option>
+                  {% if item['album_title'] != current_album %}
+                    <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
+                  {% endif %}
+                {% elif item['album_title'] != current_album %}
+                  <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
+                {% endif %}
+              {% endfor %}
+            </select><br>
+
+            <!-- Add song drop-down selection when editing an album_review -->
+            <label for="song_fk">Song:</label>
+            <select name="song_fk_data" id="song-fk-data" required>
+              {% for item in artist_fk_data %}
+                {% if loop.first %}
+                  <option value="{{ current_artist }}">{{ current_artist }}</option>
+                  {% if item['username'] != current_artist %}
+                    <option value="{{ item['username'] }}">{{ item['username'] }}</option>
+                  {% endif %}
+                {% elif item['username'] != current_artist %}
+                  <option value="{{ item['username'] }}">{{ item['username'] }}</option>
+                {% endif %}
+              {% endfor %}
+            </select><br>
+
+            <!-- Add album drop-down selection when adding an song_review -->
+            {% elif entity_name == 'song_review' %}
+            <label for="song_fk">Song:</label>
+            <select name="song_fk_data" id="song-fk-data" required>
+              {% for item in album_fk_data %}
+                {% if loop.first %}
+                  <option value="{{ current_album }}">{{ current_album }}</option>
+                  {% if item['song_title'] != current_album %}
+                    <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
+                  {% endif %}
+                {% elif item['song_title'] != current_album %}
+                  <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
+                {% endif %}
+              {% endfor %}
+            </select><br>
+
+            <!-- Add song drop-down selection when editing an song_review -->
+            <label for="user_fk">User:</label>
+            <select name="user_fk_data" id="user-fk-data" required>
+              {% for item in artist_fk_data %}
+                {% if loop.first %}
+                  <option value="{{ current_artist }}">{{ current_artist }}</option>
+                  {% if item['username'] != current_artist %}
+                    <option value="{{ item['username'] }}">{{ item['username'] }}</option>
+                  {% endif %}
+                {% elif item['username'] != current_artist %}
+                  <option value="{{ item['username'] }}">{{ item['username'] }}</option>
+                {% endif %}
+              {% endfor %}
+            </select><br>
+            {% endif %}
           {% endif %}
         {% endif %}
-      {% endif %}
     
       {% for key in entity.keys() %}
         <!-- Does not display primary/foreign keys or average song/album ratings -->
