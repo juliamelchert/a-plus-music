@@ -46,10 +46,8 @@
             {% endfor %}
           {% endfor %}
         </select><br>
-      {% endif %}
 
-      <!-- Add song drop-down selection when adding an albums_song -->
-      {% if entity_name == 'albums_song' %}
+        <!-- Add song drop-down selection when adding an albums_song -->
         <label for="song_fk">Song:</label>
         <select name="song_fk_data" id="song-fk-data" required>
           {% for item in artist_fk_data %}
