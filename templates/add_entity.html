@@ -34,7 +34,7 @@
         <select name="album_fk_data" id="album-fk-data" required>
           {% for item in album_fk_data %}
             {% for key in item.keys() %}
-              <option value="album_fk_data">{{ item[key] }}</option>
+              <option value="{{ item[key] }}">{{ item[key] }}</option>
             {% endfor %}
           {% endfor %}
         </select><br>
@@ -46,7 +46,7 @@
         <select name="song_fk_data" id="song-fk-data" required>
           {% for item in artist_fk_data %}
             {% for key in item.keys() %}
-              <option value="artist_fk_data">{{ item[key] }}</option>
+              <option value="{{ item[key] }}">{{ item[key] }}</option>
             {% endfor %}
           {% endfor %}
         </select><br>
