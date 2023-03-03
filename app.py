@@ -124,28 +124,40 @@ def edit(entity_name, entity_id):
     # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
     if request.method == "POST":
         if entity_name == "user":
-            username = request.form['username']
-            email = request.form['email']
+            db.execute_query(f'UPDATE Users SET username = %s, email = %s WHERE user_id = %s', (request.form['username'], request.form['email'], entity_id))
+            return redirect(url_for("users"))
 
-            db.execute_query(f'UPDATE Users SET username = %s, email = %s WHERE user_id = %s', (username, email, entity_id))
-            return redirect(url_for(entity_name.lower() + "s"))
+        elif entity_name == "albums_song":
+            album_id = db.execute_query('SELECT album_id FROM Albums WHERE album_title = (%s)', (request.form['album_fk_data'],)).fetchone()['album_id']
+            song_id = db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['song_fk_data'],)).fetchone()['song_id']
+            db.execute_query(f'UPDATE Albums_Songs SET album_id = %s, song_id = %s WHERE albums_song_id = %s', (album_id, song_id, entity_id))
+            return redirect(url_for("albums_songs"))
 
-    if entity_name == "album_review":
-        entity_name = "Album_Review"
+    # Refactor below since it is reused in add_entity path
+    if entity_name == "albums_song":
+        entity_name = "Albums_Song"
     elif entity_name == "song_review":
         entity_name = "Song_Review"
+    elif entity_name == "album_review":
+        entity_name = "Album_Review"
     else:
         entity_name = entity_name.capitalize()
 
-    if entity_name == "Albums_songs":
-        query = f"SELECT * FROM Albums_Songs WHERE albums_song_id = {entity_id};"
-        entity_name = "Albums_Song"
-    else:
-        query = f"SELECT * FROM {entity_name}s WHERE {entity_name.lower()}_id = {entity_id};"
-    
-    results = db.execute_query(query=query).fetchall()
+    results = db.execute_query(f"SELECT * FROM {entity_name}s;").fetchall()
 
-    return render_template("edit.html", entity_results=results, entity_name=entity_name)
+    if entity_name == "Song":
+        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
+        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
+        return render_template("edit.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=album_results, entity_name=entity_name.lower())
+    elif entity_name == "Albums_Song":
+        song_results = db.execute_query("SELECT song_title FROM Songs;").fetchall()
+        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
+        return render_template("edit.html", entity_results=results, artist_fk_data=song_results, album_fk_data=album_results, entity_name=entity_name.lower())
+    elif entity_name == "Album":
+        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
+        return render_template("edit.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
+    else:
+        return render_template("edit.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
 
 
 @app.route('/delete/<entity_name>/<int:entity_id>', methods=['GET', 'POST'])
