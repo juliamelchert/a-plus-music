@@ -83,8 +83,8 @@
             </select><br>
 
             <!-- Add song drop-down selection when editing an album_review -->
-            <label for="song_fk">Song:</label>
-            <select name="song_fk_data" id="song-fk-data" required>
+            <label for="user_fk">User:</label>
+            <select name="user_fk_data" id="user-fk-data" required>
               {% for item in artist_fk_data %}
                 {% if loop.first %}
                   <option value="{{ current_artist }}">{{ current_artist }}</option>
