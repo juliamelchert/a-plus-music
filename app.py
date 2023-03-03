@@ -138,6 +138,9 @@ def edit(entity_name, entity_id):
             song_id = db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['song_fk_data'],)).fetchone()['song_id']
             db.execute_query(f'UPDATE Albums_Songs SET album_id = %s, song_id = %s WHERE albums_song_id = %s', (album_id, song_id, entity_id))
             return redirect(url_for("albums_songs"))
+        
+        else:
+            return redirect(url_for(entity_name + "s"))
 
     # Refactor below since it is reused in add_entity path
     if entity_name == "albums_song":
