@@ -5,6 +5,7 @@ import os
 # Configuration
 
 app = Flask(__name__)
+app.secret_key = "daslkcmsdgknqwpmaslckmsrgkaw"
 
 # Routes 
 
@@ -92,10 +93,19 @@ def add_entity(entity_name):
             return redirect(url_for("users"))
         
         elif entity_name == "albums_song":
-            album_id = db.execute_query('SELECT album_id FROM Albums WHERE album_title = (%s)', (request.form['album_fk_data'],)).fetchone()['album_id']
-            song_id = db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['song_fk_data'],)).fetchone()['song_id']
-            db.execute_query('INSERT INTO Albums_Songs (album_id, song_id) VALUES (%s, %s)', (int(album_id), int(song_id)))
-            return redirect(url_for("albums_songs"))
+            album_id = int(db.execute_query('SELECT album_id FROM Albums WHERE album_title = (%s)', (request.form['album_fk_data'],)).fetchone()['album_id'])
+            song_id = int(db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['song_fk_data'],)).fetchone()['song_id'])
+
+            # Check if the entry already exists
+            exist_val = list((db.execute_query('SELECT EXISTS(SELECT * FROM Albums_Songs WHERE album_id = ' + str(album_id) + ' AND song_id = ' + str(song_id) + ')').fetchone()).values())[0]
+            print(exist_val)
+            if exist_val == 1:
+                flash("This Albums_Song already exists.")
+                print("Did not work")
+                return redirect(url_for("add_entity", entity_name=entity_name))
+            else:
+                db.execute_query('INSERT INTO Albums_Songs (album_id, song_id) VALUES (%s, %s)', (int(album_id), int(song_id)))
+                return redirect(url_for("albums_songs"))
 
     if entity_name == "albums_song":
         entity_name = "Albums_Song"
@@ -104,17 +114,13 @@ def add_entity(entity_name):
 
     results = db.execute_query(f"SELECT * FROM {entity_name}s;").fetchall()
 
-    if entity_name == "Song":
+    if entity_name == "Song" or entity_name == "Album":
         artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
-        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
-        return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=album_results, entity_name=entity_name.lower())
+        return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
     elif entity_name == "Albums_Song":
         song_results = db.execute_query("SELECT song_title FROM Songs;").fetchall()
         album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
         return render_template("add_entity.html", entity_results=results, artist_fk_data=song_results, album_fk_data=album_results, entity_name=entity_name.lower())
-    elif entity_name == "Album":
-        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
-        return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
     else:
         return render_template("add_entity.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
 
@@ -143,21 +149,25 @@ def edit(entity_name, entity_id):
     else:
         entity_name = entity_name.capitalize()
 
-    results = db.execute_query(f"SELECT * FROM {entity_name}s;").fetchall()
+    results = db.execute_query(f"SELECT * FROM {entity_name}s WHERE {entity_name}_id = {entity_id}").fetchall()
 
-    if entity_name == "Song":
+    if entity_name == "Song" or entity_name == "Album":
         artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
-        album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
-        return render_template("edit.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=album_results, entity_name=entity_name.lower())
+
+        artist_id = db.execute_query("SELECT artist_id FROM " + entity_name + "s WHERE " + entity_name.lower() + "_id = %s", (entity_id,)).fetchone()['artist_id']
+        current_artist = db.execute_query("SELECT name FROM Artists WHERE artist_id = %s;", (artist_id,)).fetchone()['name']
+        return render_template("edit.html", entity_results=results, artist_fk_data=artist_results, current_artist=current_artist, album_fk_data=[], current_album="", entity_name=entity_name.lower())
     elif entity_name == "Albums_Song":
         song_results = db.execute_query("SELECT song_title FROM Songs;").fetchall()
         album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
-        return render_template("edit.html", entity_results=results, artist_fk_data=song_results, album_fk_data=album_results, entity_name=entity_name.lower())
-    elif entity_name == "Album":
-        artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
-        return render_template("edit.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
+
+        song_id = db.execute_query("SELECT song_id FROM Albums_Songs WHERE albums_song_id = %s", (entity_id,)).fetchone()['song_id']
+        album_id = db.execute_query("SELECT album_id FROM Albums_Songs WHERE albums_song_id = %s", (entity_id,)).fetchone()['album_id']
+        current_song = db.execute_query("SELECT song_title FROM Songs WHERE song_id = %s", (song_id,)).fetchone()['song_title']
+        current_album = db.execute_query("SELECT album_title FROM Albums WHERE album_id = %s", (album_id,)).fetchone()['album_title']
+        return render_template("edit.html", entity_results=results, artist_fk_data=song_results, current_artist=current_song, album_fk_data=album_results, current_album=current_album, entity_name=entity_name.lower())
     else:
-        return render_template("edit.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
+        return render_template("edit.html", entity_results=results, artist_fk_data=[], current_artist="", album_fk_data=[], current_album="", entity_name=entity_name.lower())
 
 
 @app.route('/delete/<entity_name>/<int:entity_id>', methods=['GET', 'POST'])
@@ -178,5 +188,5 @@ def delete(entity_name, entity_id):
 # Listener
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58765)) 
+    port = int(os.environ.get('PORT', 58766)) 
     app.run(port=port, debug=True) 

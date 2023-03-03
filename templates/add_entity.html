@@ -12,6 +12,14 @@
 {% endblock %}
 
 {% block content %}
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <p class="flashes" ><strong>Error:</strong> {{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
   <form method="post">
     
     <!-- Create drop-down menus for entities that have foreign keys -->
@@ -28,8 +36,8 @@
         </select><br>
       {% endif %}
 
-      <!-- Add album drop-down selection when adding a song or albums_song -->
-      {% if entity_name == 'song' or entity_name == 'albums_song' %}
+      <!-- Add album drop-down selection when adding an albums_song -->
+      {% if entity_name == 'albums_song' %}
         <label for="album_fk">Album:</label>
         <select name="album_fk_data" id="album-fk-data" required>
           {% for item in album_fk_data %}

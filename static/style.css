@@ -13,9 +13,8 @@ h1 {
 }
 
 #creator-tag {
-  position: absolute;
-  bottom: 0;
-  width: 99%;
+  margin-left: auto;
+  margin-right: auto;
   font-size: medium;
 }
 
@@ -69,6 +68,16 @@ ul {
   display: table; 
   margin: 0 auto;
   text-align: left;
+}
+
+.flashes {
+  color: #ad0c00;
+  background-color: #f7a7a1;
+  border: 1px solid #ad0c00;
+  padding: 0.5rem 1rem;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .back_btn, .add_btn {
