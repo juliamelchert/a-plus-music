@@ -24,39 +24,30 @@
     
     <!-- Create drop-down menus for entities that have foreign keys -->
     {% if entity_name == 'album' or entity_name == 'song' or entity_name == 'albums_song' %}
-      <!-- Add artist drop-down selection when adding an album or song -->  
-      {% if entity_name == 'album' or entity_name == 'song' %}
-        <label for="artist_fk_data">Artist:</label>
-        <select name="artist_fk_data" id="artist-fk-data" required>
-          {% for item in artist_fk_data %}
-            {% for key in item.keys() %}
-              <option value="artist_fk_data">{{ item[key] }}</option>
-            {% endfor %}
-          {% endfor %}
-        </select><br>
-      {% endif %}
-
       <!-- Add album drop-down selection when adding an albums_song -->
       {% if entity_name == 'albums_song' %}
         <label for="album_fk">Album:</label>
-        <select name="album_fk_data" id="album-fk-data" required>
-          {% for item in album_fk_data %}
+        <select name="fk_data_1" id="fk-data-1" required>
+          {% for item in fk_data_1 %}
             {% for key in item.keys() %}
               <option value="{{ item[key] }}">{{ item[key] }}</option>
             {% endfor %}
           {% endfor %}
         </select><br>
-
-        <!-- Add song drop-down selection when adding an albums_song -->
-        <label for="song_fk">Song:</label>
-        <select name="song_fk_data" id="song-fk-data" required>
-          {% for item in artist_fk_data %}
-            {% for key in item.keys() %}
-              <option value="{{ item[key] }}">{{ item[key] }}</option>
-            {% endfor %}
+      {% endif %}  
+    
+      <!-- Add artist drop-down selection when adding an album or song, 
+           add a song drop-down selection when adding an albums_song -->  
+      <label for="fk_data_2">{% if entity_name == 'album' or entity_name == 'song' %}Artist:
+                              {% else %}Song:
+                              {% endif %}</label>
+      <select name="fk_data_2" id="fk-data-2" required>
+        {% for item in fk_data_2 %}
+          {% for key in item.keys() %}
+            <option value="{{ item[key] }}">{{ item[key] }}</option>
           {% endfor %}
-        </select><br>
-      {% endif %}
+        {% endfor %}
+      </select><br>
     {% endif %}
     
     {% for key in entity_results[0].keys() %}

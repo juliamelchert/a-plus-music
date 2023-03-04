@@ -1,9 +1,9 @@
 from flask import Flask, render_template, redirect, url_for, request, flash
 import database.db_connector as db
+import queries
 import os
 
 # Configuration
-
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
@@ -12,102 +12,88 @@ app.secret_key = os.environ.get("SECRET_KEY")
 def root():
     return render_template("index.html")
 
-@app.route('/song-reviews', methods=['GET', 'POST'])
-def song_reviews():
-    """ Displays the Song_Reviews table """
-
-    results = db.execute_query(("SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
-                                " JOIN Users ON Users.user_id = Song_Reviews.user_id"
-                                " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
-                                " ORDER BY Songs.song_title ASC;")).fetchall()
-
-    return render_template("entities/song_reviews.html", song_reviews=results)
-
 @app.route('/album-reviews', methods=['GET', 'POST'])
 def album_reviews():
     """ Displays the Album_Reviews table """
 
-    results = db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
-                                " JOIN Users ON Users.user_id = Album_Reviews.user_id"
-                                " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
-                                " ORDER BY Albums.album_title ASC;")).fetchall()
+    return render_template("entities/album_reviews.html", album_reviews=queries.get_all_album_reviews())
 
-    return render_template("entities/album_reviews.html", album_reviews=results)
+@app.route('/song-reviews', methods=['GET', 'POST'])
+def song_reviews():
+    """ Displays the Song_Reviews table """
 
-@app.route('/songs', methods=['GET', 'POST'])
-def songs():
-    """ Displays the Songs table """
-
-    results = db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
-                               " JOIN Artists ON Artists.artist_id = Songs.artist_id"
-                               " ORDER BY Songs.song_title ASC;")).fetchall()
-
-    return render_template("entities/songs.html", songs=results)
+    return render_template("entities/song_reviews.html", song_reviews=queries.get_all_song_reviews())
 
 @app.route('/albums', methods=['GET', 'POST'])
 def albums():
     """ Displays the Albums table """
 
-    results = db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
-                                " JOIN Artists ON Artists.artist_id = Albums.artist_id"
-                                " ORDER BY Albums.album_title ASC;")).fetchall()
-
-    return render_template("entities/albums.html", albums=results)
+    return render_template("entities/albums.html", albums=queries.get_all_albums())
 
 @app.route('/albums-songs', methods=['GET', 'POST'])
 def albums_songs():
     """ Displays the Albums_Songs table """
 
-    results = db.execute_query(("SELECT Albums_Songs.albums_song_id AS 'Album Song ID', Albums.album_title AS Album, Songs.song_title AS Song FROM Albums_Songs"
-                               " LEFT JOIN Albums ON Albums.album_id = Albums_Songs.album_id"
-                               " LEFT JOIN Songs ON Songs.song_id = Albums_Songs.song_id"
-                               " ORDER BY Albums_Songs.albums_song_id ASC;")).fetchall()
-
-    return render_template("entities/albums_songs.html", albums_songs=results)
+    return render_template("entities/albums_songs.html", albums_songs=queries.get_all_albums_songs())
 
 @app.route('/artists', methods=['GET', 'POST'])
 def artists():
     """ Displays the Artists table """
-
-    results = db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
-                               " ORDER BY Artists.name ASC;")).fetchall()
     
-    return render_template("entities/artists.html", artists=results)
+    return render_template("entities/artists.html", artists=queries.get_all_artists)
+
+@app.route('/songs', methods=['GET', 'POST'])
+def songs():
+    """ Displays the Songs table """
+
+    return render_template("entities/songs.html", songs=queries.get_all_songs())
 
 @app.route('/users', methods=['GET', 'POST'])
 def users():
     """ Displays the Users table """
 
-    results = db.execute_query(("SELECT Users.user_id AS 'User ID', username AS User, email AS 'E-mail' FROM Users"
-                                " ORDER BY username ASC;")).fetchall()
-
-    return render_template("entities/users.html", users=results)
+    return render_template("entities/users.html", users=queries.get_all_users())
 
 @app.route('/add/<review_type>-review', methods=['GET', 'POST'])
 def add_review(review_type):
     """ Handles creations of Song_Reviews and Album_Reviews """
 
-    results = db.execute_query(f"SELECT {review_type}_title FROM {review_type.capitalize()}s;").fetchall()
-    users = db.execute_query("SELECT username FROM Users")
+    if request.method == "GET":
+        results = queries.get_add_review_info(review_type)
 
-    if request.method == "POST":
-        return redirect(url_for(review_type.lower() + "_reviews"))
+    elif request.method == "POST":
+        return redirect(url_for(review_type + "_reviews"))
 
-    return render_template("add_review.html", media_type=review_type, media_list=results, users=users)
+    return render_template("add_review.html", media_type=review_type, media_list=results[0], users=results[1])
 
 @app.route('/add/<entity_name>', methods=['GET', 'POST'])
 def add_entity(entity_name):
     """ Handles creations of Songs, Albums, Artists, Users, and Albums_Songs """
 
+    # Handle GET requests (loading page)
+    if request.method == "GET":
+        if entity_name == "albums_song":
+            results = queries.get_star_albums_songs()
+        else:
+            results = queries.get_star_entity(entity_name)
+
+        # Dynamically generates drop-down menus for different entities
+        if entity_name == "song" or entity_name == "album":
+            return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=[], fk_data_2=queries.get_artist_names())
+        elif entity_name == "albums_song":
+            return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=queries.get_album_titles(), fk_data_2=queries.get_song_titles())
+        else:
+            return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=[], fk_data_2=[])
+
     # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
-    if request.method == "POST":
+    elif request.method == "POST":
         if entity_name == "user":
             db.execute_query('INSERT INTO Users (username, email) VALUES (%s, %s)', (request.form['username'], request.form['email']))
             return redirect(url_for("users"))
         
         elif entity_name == "albums_song":
-            album_id = int(db.execute_query('SELECT album_id FROM Albums WHERE album_title = (%s)', (request.form['album_fk_data'],)).fetchone()['album_id'])
-            song_id = int(db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['song_fk_data'],)).fetchone()['song_id'])
+            album_id = int(db.execute_query('SELECT album_id FROM Albums WHERE album_title = (%s)', (request.form['fk_data_1'],)).fetchone()['album_id'])
+            song_id = int(db.execute_query('SELECT song_id FROM Songs WHERE song_title = (%s)', (request.form['fk_data_2'],)).fetchone()['song_id'])
 
             # Check if the entry already exists, since Albums_Songs additions must be unique
             exist_val = list((db.execute_query('SELECT EXISTS(SELECT * FROM Albums_Songs WHERE album_id = ' + str(album_id) + ' AND song_id = ' + str(song_id) + ')').fetchone()).values())[0]
@@ -119,25 +105,6 @@ def add_entity(entity_name):
                 db.execute_query('INSERT INTO Albums_Songs (album_id, song_id) VALUES (%s, %s)', (int(album_id), int(song_id)))
                 return redirect(url_for("albums_songs"))
     
-    # Handle GET requests (loading page)
-    elif request.method == "GET":
-        if entity_name == "albums_song":
-            entity_name = "Albums_Song"
-        else:
-            entity_name = entity_name.capitalize()
-
-        results = db.execute_query(f"SELECT * FROM {entity_name}s;").fetchall()
-
-        if entity_name == "Song" or entity_name == "Album":
-            artist_results = db.execute_query("SELECT name FROM Artists;").fetchall()
-            return render_template("add_entity.html", entity_results=results, artist_fk_data=artist_results, album_fk_data=[], entity_name=entity_name.lower())
-        elif entity_name == "Albums_Song":
-            song_results = db.execute_query("SELECT song_title FROM Songs;").fetchall()
-            album_results = db.execute_query("SELECT album_title FROM Albums;").fetchall()
-            return render_template("add_entity.html", entity_results=results, artist_fk_data=song_results, album_fk_data=album_results, entity_name=entity_name.lower())
-        else:
-            return render_template("add_entity.html", entity_results=results, artist_fk_data=[], album_fk_data=[], entity_name=entity_name.lower())
-
 @app.route('/edit/<entity_name>/<int:entity_id>', methods=('GET', 'POST'))
 def edit(entity_name, entity_id):
     """ Handles updates to any entity in any of the tables """
@@ -227,5 +194,5 @@ def delete(entity_name, entity_id):
 
 # Listener
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58765)) 
+    port = int(os.environ.get('PORT', 58766)) 
     app.run(port=port, debug=True) 
