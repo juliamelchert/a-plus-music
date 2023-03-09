@@ -15,7 +15,7 @@ CREATE OR REPLACE TABLE Users (
 -- Create Artists
 CREATE OR REPLACE TABLE Artists (
     artist_id int NOT NULL AUTO_INCREMENT,
-    name varchar(45) NOT NULL,
+    name varchar(45) UNIQUE NOT NULL,
     PRIMARY KEY (artist_id)
 );
 

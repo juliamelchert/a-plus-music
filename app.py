@@ -168,7 +168,16 @@ def edit(entity_name, entity_id):
     # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
     # Handle POST requests from editing an entity
     elif request.method == "POST":
-        if entity_name == "user":
+        if entity_name == "song":
+            edit_song(get_artist_id_from_name(request.form['artist_fk_data']), request.form['song_title'], request.form['song_genre'], entity_id)
+
+        elif entity_name == "album":
+            edit_album(get_artist_id_from_name(request.form['artist_fk_data']), request.form['album_title'], request.form['album_genre'], entity_id)
+
+        elif entity_name == "artist":
+            edit_artist(request.form['name'], entity_id)
+        
+        elif entity_name == "user":
             edit_user(request.form['username'], request.form['email'], entity_id)
 
         elif entity_name == "albums_song":

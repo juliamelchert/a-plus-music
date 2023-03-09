@@ -91,6 +91,10 @@ def add_album(artist_id, album_title, album_genre) -> None:
     """ Inserts a new Album entity with the given artist_id, album_title, and album_genre """
     db.execute_query(f"INSERT INTO Albums (artist_id, album_title, album_genre) VALUES ('{artist_id}', '{album_title}', '{album_genre}')")
 
+def edit_album(artist_id, album_title, album_genre, album_id) -> None:
+    """ Updates the artist_id, album_title, and album_genre of the Album with the given album_id """
+    db.execute_query(f"UPDATE Albums SET artist_id = '{artist_id}', album_title = '{album_title}', album_genre = '{album_genre}' WHERE album_id = {album_id}")
+
 def delete_album(album_id) -> None:
     """ Deletes an Album entity using its unique album_id """
     db.execute_query(f"DELETE FROM Albums WHERE album_id = {album_id}")
@@ -171,6 +175,10 @@ def add_artist(name) -> None:
     """ Inserts a new Artist entity with the given name """
     db.execute_query(f"INSERT INTO Artists (name) VALUES ('{name}')")
 
+def edit_artist(name, artist_id) -> None:
+    """ Updates the name of the Artist with the given artist_id """
+    db.execute_query(f"UPDATE Artists SET name = '{name}' WHERE artist_id = {artist_id}")
+
 def delete_artist(artist_id) -> None:
     """ Deletes an Artist entity using its unique artist_id """
     db.execute_query("SET foreign_key_checks = 0;")
@@ -204,6 +212,10 @@ def add_song(artist_id, song_title, song_genre) -> None:
     """ Inserts a new Song entity with the given artist_id, song_title, and song_genre """
     db.execute_query(f"INSERT INTO Songs (artist_id, song_title, song_genre) VALUES ('{artist_id}', '{song_title}', '{song_genre}')")
 
+def edit_song(artist_id, song_title, song_genre, song_id) -> None:
+    """ Updates the artist_id, song_title, and song_genre of the Song with the given song_id """
+    db.execute_query(f"UPDATE Songs SET artist_id = '{artist_id}', song_title = '{song_title}', song_genre = '{song_genre}' WHERE song_id = {song_id}")
+
 def delete_song(song_id) -> None:
     """ Deletes a Song entity using its unique song_id """
     db.execute_query(f"DELETE FROM Songs WHERE song_id = {song_id}")
@@ -231,7 +243,7 @@ def add_user(username, email) -> None:
     db.execute_query(f"INSERT INTO Users (username, email) VALUES ('{username}', '{email}')")
 
 def edit_user(username, email, user_id) -> None:
-    """  """
+    """ Updates the username and email of the User with the given user_id """
     db.execute_query(f"UPDATE Users SET username = '{username}', email = '{email}' WHERE user_id = {user_id}")
 
 def delete_user(user_id) -> None:
