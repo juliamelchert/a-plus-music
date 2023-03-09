@@ -88,8 +88,24 @@ def add_entity(entity_name):
     # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
     # Handle POST requests from adding an entity
     elif request.method == "POST":
+        
+        # Insert into Songs table
+        if entity_name == "song":
+            add_song(get_artist_id_from_name(request.form['fk_data_2']), request.form['song_title'], request.form['song_genre'])
+            return redirect(url_for("songs"))
+
+        # Insert into Albums table
+        elif entity_name == "album":
+            add_album(get_artist_id_from_name(request.form['fk_data_2']), request.form['album_title'], request.form['album_genre'])
+            return redirect(url_for("albums"))
+
+        # Insert into Artists table
+        elif entity_name == "artist":
+            add_artist(request.form['name'])
+            return redirect(url_for("artists"))
+
         # Insert into Users table
-        if entity_name == "user":
+        elif entity_name == "user":
             add_user(request.form['username'], request.form['email'])
             return redirect(url_for("users"))
         

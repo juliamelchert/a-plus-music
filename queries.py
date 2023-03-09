@@ -29,7 +29,7 @@ def delete_album_review(album_review_id) -> None:
 ##### SONG REVIEWS ######
 def get_all_song_reviews():
     """ Returns aliased information about all Song_Reviews """
-    val = db.execute_query(("SELECT * FROM ("
+    return db.execute_query(("SELECT * FROM ("
                              " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
@@ -38,8 +38,6 @@ def get_all_song_reviews():
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
                              " ORDER BY `Song Review ID` ASC;")).fetchall()
-    print(val)
-    return val
 
 def get_song_id_from_song_review_id(song_review_id) -> int:
     """ Returns the corresponding song_id for the given song_review_id """
@@ -88,6 +86,10 @@ def get_album_id_from_title(title) -> int:
 def get_album_title_from_id(album_id) -> str:
     """ Returns the album_title that corresponds to the given album_id """
     return db.execute_query(f"SELECT album_title FROM Albums WHERE album_id = {album_id}").fetchone()['album_title']
+
+def add_album(artist_id, album_title, album_genre) -> None:
+    """ Inserts a new Album entity with the given artist_id, album_title, and album_genre """
+    db.execute_query(f"INSERT INTO Albums (artist_id, album_title, album_genre) VALUES ('{artist_id}', '{album_title}', '{album_genre}')")
 
 def delete_album(album_id) -> None:
     """ Deletes an Album entity using its unique album_id """
@@ -153,6 +155,10 @@ def get_artist_names():
     """ Returns all name values from the Artists table """
     return db.execute_query("SELECT name FROM Artists;").fetchall()
 
+def get_artist_id_from_name(name) -> int:
+    """ Returns the corresponding artist_id given a name """
+    return int(db.execute_query(f"SELECT artist_id FROM Artists WHERE name = ('{name}')").fetchone()['artist_id'])
+
 def get_artist_name_from_id(artist_id) -> str:
     """ Returns the corresponding name value for the given artist_id """
     return db.execute_query(f"SELECT name FROM Artists WHERE artist_id = {artist_id}").fetchone()['name']
@@ -160,6 +166,10 @@ def get_artist_name_from_id(artist_id) -> str:
 def get_current_artist_id_from_table(table_name, entity_id):
     """ Returns the current artist_id value for the given table and entity ID's artist """
     return db.execute_query(f"SELECT artist_id FROM {table_name}s WHERE {table_name.lower()}_id = {entity_id}").fetchone()['artist_id']
+
+def add_artist(name) -> None:
+    """ Inserts a new Artist entity with the given name """
+    db.execute_query(f"INSERT INTO Artists (name) VALUES ('{name}')")
 
 def delete_artist(artist_id) -> None:
     """ Deletes an Artist entity using its unique artist_id """
@@ -189,6 +199,10 @@ def get_song_id_from_title(title) -> int:
 def get_song_title_from_id(song_id) -> str:
     """ Returns the corresponding song_title given a song_id """
     return db.execute_query(f"SELECT song_title FROM Songs WHERE song_id = {song_id}").fetchone()['song_title']
+
+def add_song(artist_id, song_title, song_genre) -> None:
+    """ Inserts a new Song entity with the given artist_id, song_title, and song_genre """
+    db.execute_query(f"INSERT INTO Songs (artist_id, song_title, song_genre) VALUES ('{artist_id}', '{song_title}', '{song_genre}')")
 
 def delete_song(song_id) -> None:
     """ Deletes a Song entity using its unique song_id """
