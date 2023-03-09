@@ -54,7 +54,11 @@
       <!-- Does not display primary/foreign keys or average song/album ratings -->
       {% if key != entity_name + '_id' and key[:3] != "avg" and key[-3:] != '_id' %}
         <label for="{{ key }}">{{ key.capitalize() }}:</label>
-        <input name="{{ key }}" id="{{ key }}" required><br>
+          {% if key == 'email' %}
+            <input name="email" id="email" type="email" required><br>
+          {% else %}
+            <input name="{{ key }}" id="{{ key }}" required><br>
+          {% endif %}
       {% endif %}
     {% endfor %}
 
