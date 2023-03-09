@@ -15,6 +15,7 @@ def root():
 @app.route('/album-reviews', methods=['GET', 'POST'])
 def album_reviews():
     """ Displays the Album_Reviews table """
+    print(f"Album reviews: {get_all_album_reviews()}")
 
     return render_template("entities/album_reviews.html", album_reviews=get_all_album_reviews())
 

@@ -12,7 +12,11 @@ def get_all_album_reviews():
     return db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
                              " JOIN Users ON Users.user_id = Album_Reviews.user_id"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
-                             " ORDER BY Albums.album_title ASC;")).fetchall()
+                             " UNION ALL"
+                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'deleted_user') AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
+                             " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
+                             " WHERE (SELECT ISNULL(Album_Reviews.user_id)) = 1"
+                             " ORDER BY Album ASC;")).fetchall()
 
 def get_album_id_from_album_review_id(album_review_id) -> int:
     """ Returns the corresponding album_id for the given album_review_id """
@@ -24,7 +28,11 @@ def get_all_song_reviews():
     return db.execute_query(("SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
-                             " ORDER BY Songs.song_title ASC;")).fetchall()
+                             " UNION ALL"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'deleted_user') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+                             " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
+                             " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1"
+                             " ORDER BY Song ASC;")).fetchall()
 
 def get_song_id_from_song_review_id(song_review_id) -> int:
     """ Returns the corresponding song_id for the given song_review_id """
