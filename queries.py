@@ -16,27 +16,38 @@ def get_all_album_reviews():
                              " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'deleted_user') AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " WHERE (SELECT ISNULL(Album_Reviews.user_id)) = 1"
-                             " ORDER BY Album ASC;")).fetchall()
+                             " ORDER BY `Album Review ID` ASC;")).fetchall()
 
 def get_album_id_from_album_review_id(album_review_id) -> int:
     """ Returns the corresponding album_id for the given album_review_id """
     return int(db.execute_query(f"SELECT album_id FROM Album_Reviews WHERE album_review_id = {album_review_id}").fetchone()['album_id'])
 
+def delete_album_review(album_review_id) -> None:
+    """ Deletes an Album_Review entity using its unique album_review_id """
+    db.execute_query(f"DELETE FROM Album_Reviews WHERE album_review_id = {album_review_id}")
+
 ##### SONG REVIEWS ######
 def get_all_song_reviews():
     """ Returns aliased information about all Song_Reviews """
-    return db.execute_query(("SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+    val = db.execute_query(("SELECT * FROM ("
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " UNION ALL"
                              " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'deleted_user') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
-                             " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1"
-                             " ORDER BY Song ASC;")).fetchall()
+                             " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
+                             " ORDER BY `Song Review ID` ASC;")).fetchall()
+    print(val)
+    return val
 
 def get_song_id_from_song_review_id(song_review_id) -> int:
     """ Returns the corresponding song_id for the given song_review_id """
     return int(db.execute_query(f"SELECT song_id FROM Song_Reviews WHERE song_review_id = {song_review_id}").fetchone()['song_id'])
+
+def delete_song_review(song_review_id) -> None:
+    """ Deletes an Song_Review entity using its unique song_review_id """
+    db.execute_query(f"DELETE FROM Song_Reviews WHERE song_review_id = {song_review_id}")
 
 ##### BOTH REVIEWS #####
 def get_add_review_info(review_type) -> tuple:
@@ -64,7 +75,7 @@ def get_all_albums():
     """ Returns aliased information about all Albums """
     return db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
                              " JOIN Artists ON Artists.artist_id = Albums.artist_id"
-                             " ORDER BY Albums.album_title ASC;")).fetchall()
+                             " ORDER BY 'Album ID' ASC;")).fetchall()
 
 def get_album_titles():
     """ Returns all album_title values from the Albums table """
@@ -78,6 +89,10 @@ def get_album_title_from_id(album_id) -> str:
     """ Returns the album_title that corresponds to the given album_id """
     return db.execute_query(f"SELECT album_title FROM Albums WHERE album_id = {album_id}").fetchone()['album_title']
 
+def delete_album(album_id) -> None:
+    """ Deletes an Album entity using its unique album_id """
+    db.execute_query(f"DELETE FROM Albums WHERE album_id = {album_id}")
+
 ##################################################
 #                                                #
 # ALBUMS_SONGS QUERIES                           #
@@ -89,7 +104,7 @@ def get_all_albums_songs():
     return db.execute_query(("SELECT Albums_Songs.albums_song_id AS 'Album Song ID', Albums.album_title AS Album, Songs.song_title AS Song FROM Albums_Songs"
                              " LEFT JOIN Albums ON Albums.album_id = Albums_Songs.album_id"
                              " LEFT JOIN Songs ON Songs.song_id = Albums_Songs.song_id"
-                             " ORDER BY Albums_Songs.albums_song_id ASC;")).fetchall()
+                             " ORDER BY 'Album Song ID' ASC;")).fetchall()
 
 def get_star_albums_songs():
     """ Returns all information from the Albums_Songs table, without aliases """
@@ -132,7 +147,7 @@ def check_albums_song_exists(album_id, song_id) -> int:
 def get_all_artists():
     """ Returns aliased information about all Artists """
     return db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
-                             " ORDER BY Artists.name ASC;")).fetchall()
+                             " ORDER BY 'Artist ID' ASC;")).fetchall()
 
 def get_artist_names():
     """ Returns all name values from the Artists table """
@@ -146,6 +161,10 @@ def get_current_artist_id_from_table(table_name, entity_id):
     """ Returns the current artist_id value for the given table and entity ID's artist """
     return db.execute_query(f"SELECT artist_id FROM {table_name}s WHERE {table_name.lower()}_id = {entity_id}").fetchone()['artist_id']
 
+def delete_artist(artist_id) -> None:
+    """ Deletes an Artist entity using its unique artist_id """
+    db.execute_query("SET foreign_key_checks = 0;")
+    db.execute_query(f"DELETE FROM Artists WHERE artist_id = {artist_id}")
 
 ##################################################
 #                                                #
@@ -157,7 +176,7 @@ def get_all_songs():
     """ Returns aliased information about all Songs """
     return db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
                              " JOIN Artists ON Artists.artist_id = Songs.artist_id"
-                             " ORDER BY Songs.song_title ASC;")).fetchall()
+                             " ORDER BY 'Song ID' ASC;")).fetchall()
 
 def get_song_titles():
     """ Returns all song_title values from the Songs table """
@@ -171,6 +190,10 @@ def get_song_title_from_id(song_id) -> str:
     """ Returns the corresponding song_title given a song_id """
     return db.execute_query(f"SELECT song_title FROM Songs WHERE song_id = {song_id}").fetchone()['song_title']
 
+def delete_song(song_id) -> None:
+    """ Deletes a Song entity using its unique song_id """
+    db.execute_query(f"DELETE FROM Songs WHERE song_id = {song_id}")
+
 ##################################################
 #                                                #
 # USER QUERIES                                   #
@@ -180,7 +203,7 @@ def get_song_title_from_id(song_id) -> str:
 def get_all_users():
     """ Returns aliased information about all Users """
     return db.execute_query(("SELECT Users.user_id AS 'User ID', username AS User, email AS 'E-mail' FROM Users"
-                             " ORDER BY username ASC;")).fetchall()
+                             " ORDER BY 'User ID' ASC;")).fetchall()
 def get_usernames():
     """ Returns all username values from the Users table """
     return db.execute_query("SELECT username FROM Users;").fetchall()

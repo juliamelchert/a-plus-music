@@ -27,7 +27,7 @@ CREATE OR REPLACE TABLE Albums (
     album_title varchar(125) NOT NULL,
     album_genre varchar(24) NOT NULL,
     PRIMARY KEY (album_id),
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id)
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE
 );
 
 -- Create Songs table
@@ -38,7 +38,7 @@ CREATE OR REPLACE TABLE Songs (
     song_title varchar(125) NOT NULL,
     song_genre varchar(24) NOT NULL,
     PRIMARY KEY (song_id),
-    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id)
+    FOREIGN KEY (artist_id) REFERENCES Artists(artist_id) ON DELETE CASCADE
 );
 
 -- Create Song_Review table

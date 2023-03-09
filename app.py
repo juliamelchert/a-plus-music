@@ -15,7 +15,6 @@ def root():
 @app.route('/album-reviews', methods=['GET', 'POST'])
 def album_reviews():
     """ Displays the Album_Reviews table """
-    print(f"Album reviews: {get_all_album_reviews()}")
 
     return render_template("entities/album_reviews.html", album_reviews=get_all_album_reviews())
 
@@ -168,10 +167,20 @@ def delete(entity_name, entity_id):
     """ Handles deletions from any of the tables """
 
     if request.method == "POST":
-        if entity_name == "user":
+        if entity_name == "song":
+            delete_song(entity_id)
+        elif entity_name == "album":
+            delete_album(entity_id)
+        elif entity_name == "artist":
+            delete_artist(entity_id)
+        elif entity_name == "user":
             delete_user(entity_id)
         elif entity_name == "albums_song":
             delete_albums_song(entity_id)
+        elif entity_name == "song_review":
+            delete_song_review(entity_id)
+        elif entity_name == "album_review":
+            delete_album_review(entity_id)
 
     return redirect(url_for(entity_name + 's'))
 
