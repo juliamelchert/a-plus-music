@@ -15,7 +15,7 @@ CREATE OR REPLACE TABLE Users (
 -- Create Artists
 CREATE OR REPLACE TABLE Artists (
     artist_id int NOT NULL AUTO_INCREMENT,
-    name varchar(45) UNIQUE NOT NULL,
+    name varchar(45) NOT NULL UNIQUE,
     PRIMARY KEY (artist_id)
 );
 
@@ -132,7 +132,7 @@ INSERT INTO Song_Reviews (user_id, song_id, song_rating, song_review_body) VALUE
 ((SELECT user_id FROM Users WHERE username = 'user1'), (SELECT song_id FROM Songs WHERE song_title = 'Thriller'), 5, "There's a reason why Michael Jackson is known as the King of Pop!"),
 ((SELECT user_id FROM Users WHERE username = 'user1'), (SELECT song_id FROM Songs WHERE song_title = 'September'), 5, '"Do you remember, the 21st night of September?"'),
 ((SELECT user_id FROM Users WHERE username = 'user2'), (SELECT song_id FROM Songs WHERE song_title = 'Spain'), 5, 'RIP Chick Corea. You truly pushed the boundaries of Jazz and created such an amazing Jazz standard.'),
-((SELECT user_id FROM Users WHERE username = 'user2'), (SELECT song_id FROM Songs WHERE song_title = 'September'), 5, NULL),
+((SELECT user_id FROM Users WHERE username = 'user2'), (SELECT song_id FROM Songs WHERE song_title = 'September'), 3, NULL),
 ((SELECT user_id FROM Users WHERE username = 'user3'), (SELECT song_id FROM Songs WHERE song_title = 'Money'), 5, NULL),
 ((SELECT user_id FROM Users WHERE username = 'user3'), (SELECT song_id FROM Songs WHERE song_title = 'Fat'), 5, '"He who is tired of Weird Al is tired of life." - Homer Simpson');
 
@@ -161,6 +161,105 @@ INSERT INTO Albums_Songs (album_id, song_id) VALUES
 ((SELECT album_id FROM Albums WHERE album_title = 'Thriller'), (SELECT song_id FROM Songs WHERE song_title = 'Beat It')),
 ((SELECT album_id FROM Albums WHERE album_title = 'September (Single)'), (SELECT song_id FROM Songs WHERE song_title = 'September'));
 
+
+-- Extra Functions to make average rating more functional
+-- Triggers for Song_Reviews to Recalculate Average Rating
+-- Insert Trigger for Song_Reviews
+CREATE TRIGGER new_song_review
+AFTER INSERT ON Song_Reviews
+FOR EACH ROW 
+UPDATE Songs SET avg_song_rating = (
+    SELECT AVG(song_rating) FROM Song_Reviews
+    WHERE Song_Reviews.song_id = NEW.song_id
+)
+WHERE Songs.song_id = NEW.song_id;
+
+
+-- Delete Trigger for Song_Reviews
+CREATE TRIGGER delete_song_review
+AFTER DELETE ON Song_Reviews
+FOR EACH ROW 
+UPDATE Songs SET avg_song_rating = (
+    SELECT AVG(song_rating) FROM Song_Reviews
+    WHERE Song_Reviews.song_id = OLD.song_id
+)
+WHERE Songs.song_id = OLD.song_id;
+
+
+-- Update Trigger for Song_Reviews
+CREATE TRIGGER update_song_review
+AFTER UPDATE ON Song_Reviews
+FOR EACH ROW 
+UPDATE Songs SET avg_song_rating = (
+    SELECT AVG(song_rating) FROM Song_Reviews
+    WHERE Song_Reviews.song_id = NEW.song_id
+)
+WHERE Songs.song_id = NEW.song_id;
+
+
+-- Triggers for Album_Reviews to Recalculate Average Rating
+-- Insert Trigger for Album_Reviews
+CREATE TRIGGER new_album_review
+AFTER INSERT ON Album_Reviews
+FOR EACH ROW 
+UPDATE Albums SET avg_album_rating = (
+    SELECT AVG(Album_rating) FROM Album_Reviews
+    WHERE Album_Reviews.Album_id = NEW.album_id
+)
+WHERE Albums.album_id = NEW.album_id;
+
+
+-- Delete Trigger for Album_Reviews
+CREATE TRIGGER delete_album_review
+AFTER DELETE ON Album_Reviews
+FOR EACH ROW 
+UPDATE Albums SET avg_album_rating = (
+    SELECT AVG(Album_rating) FROM Album_Reviews
+    WHERE Album_Reviews.album_id = OLD.album_id
+)
+WHERE Albums.album_id = OLD.album_id;
+
+
+-- Update Trigger for Album_Reviews
+CREATE TRIGGER update_album_review
+AFTER UPDATE ON Album_Reviews
+FOR EACH ROW 
+UPDATE Albums SET avg_album_rating = (
+    SELECT AVG(album_rating) FROM Album_Reviews
+    WHERE Album_Reviews.album_id = NEW.album_id
+)
+WHERE Albums.album_id = NEW.album_id;
+
+
+-- For Loop to Update Albums
+DELIMITER //
+
+FOR i IN (SELECT album_id FROM Albums)
+DO
+    UPDATE Albums SET avg_album_rating = (
+        SELECT AVG(Album_rating) FROM Album_Reviews
+        WHERE Album_Reviews.album_id = i.album_id
+    )
+    WHERE Albums.album_id = i.album_id;
+END FOR;
+//
+
+DELIMITER ;
+
+-- For Loop to Update Songs
+DELIMITER //
+
+FOR i IN (SELECT song_id FROM Songs)
+DO
+    UPDATE Songs SET avg_song_rating = (
+        SELECT AVG(song_rating) FROM Song_Reviews
+        WHERE Song_Reviews.song_id = i.song_id
+    )
+    WHERE Songs.song_id = i.song_id;
+END FOR;
+//
+
+DELIMITER ;
 
 -- SELECT * FROM Albums;
 -- SELECT * FROM Songs;
