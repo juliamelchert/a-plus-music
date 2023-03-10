@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    background-color: lightsteelblue;
+    background-color: #b0c4de;
 }
 
 h1 {
@@ -81,7 +81,7 @@ ul {
   margin-right: auto;
 }
 
-button {
+button, .delete_btn, .back_btn, .submit_save_btn, .submit_add_btn {
   color: white;
   padding: 0.5rem 1rem;
   font-size: large;
@@ -91,17 +91,13 @@ button {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
-button:hover {
+button:hover, .delete_btn:hover, .back_btn:hover, .submit_save_btn:hover, .submit_add_btn:hover {
   color: #8A77A3;
   padding: 0.5rem 1rem;
   font-size: large;
   background-color: whitesmoke;
   border-color: #282828;
   border-radius: 10px;
-}
-
-div .add_btn {
-  margin-top: 10px;
 }
 
 
