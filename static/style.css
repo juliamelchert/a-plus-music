@@ -26,6 +26,10 @@ nav {
   border: 2px solid black;
 }
 
+.nav_btn {
+  margin: 0 0;
+}
+
 header .action {
   display: block;
   padding: 0.5rem;
@@ -65,7 +69,7 @@ p {
   font-size: x-large;
 }
 
-ul {
+table ul {
   display: table; 
   margin: 0 auto;
   text-align: left;
@@ -91,6 +95,7 @@ button, .delete_btn, .back_btn, .submit_save_btn, .submit_add_btn {
   margin-top: 0.5rem;
   margin-bottom: 0.5rem;
 }
+
 button:hover, .delete_btn:hover, .back_btn:hover, .submit_save_btn:hover, .submit_add_btn:hover {
   color: #8A77A3;
   padding: 0.5rem 1rem;
@@ -100,8 +105,7 @@ button:hover, .delete_btn:hover, .back_btn:hover, .submit_save_btn:hover, .submi
   border-radius: 10px;
 }
 
-
-#review_body {
+.review_body {
   height: 200px;
   width: 500px;
 }

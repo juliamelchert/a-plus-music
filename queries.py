@@ -73,7 +73,7 @@ def get_all_albums():
     """ Returns aliased information about all Albums """
     return db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
                              " JOIN Artists ON Artists.artist_id = Albums.artist_id"
-                             " ORDER BY 'Album ID' ASC;")).fetchall()
+                             " ORDER BY `Album ID` ASC;")).fetchall()
 
 def get_album_titles():
     """ Returns all album_title values from the Albums table """
@@ -110,7 +110,7 @@ def get_all_albums_songs():
     return db.execute_query(("SELECT Albums_Songs.albums_song_id AS 'Album Song ID', Albums.album_title AS Album, Songs.song_title AS Song FROM Albums_Songs"
                              " LEFT JOIN Albums ON Albums.album_id = Albums_Songs.album_id"
                              " LEFT JOIN Songs ON Songs.song_id = Albums_Songs.song_id"
-                             " ORDER BY 'Album Song ID' ASC;")).fetchall()
+                             " ORDER BY `Album Song ID` ASC;")).fetchall()
 
 def get_star_albums_songs():
     """ Returns all information from the Albums_Songs table, without aliases """
@@ -156,11 +156,8 @@ def check_albums_song_exists(album_id, song_id) -> int:
 
 def get_all_artists():
     """ Returns aliased information about all Artists """
-    val = db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
-                             " ORDER BY 'Artist ID' ASC;")).fetchall()
-
-    print(val)
-    return val
+    return db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
+                             " ORDER BY `Artist ID` ASC;")).fetchall()
 
 def get_artist_names():
     """ Returns all name values from the Artists table """
@@ -201,7 +198,7 @@ def get_all_songs():
     """ Returns aliased information about all Songs """
     return db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
                              " JOIN Artists ON Artists.artist_id = Songs.artist_id"
-                             " ORDER BY 'Song ID' ASC;")).fetchall()
+                             " ORDER BY `Song ID` ASC;")).fetchall()
 
 def get_song_titles():
     """ Returns all song_title values from the Songs table """
@@ -236,7 +233,7 @@ def delete_song(song_id) -> None:
 def get_all_users():
     """ Returns aliased information about all Users """
     return db.execute_query(("SELECT Users.user_id AS 'User ID', username AS Username, email AS 'E-mail' FROM Users"
-                             " ORDER BY 'User ID' ASC;")).fetchall()
+                             " ORDER BY `User ID` ASC;")).fetchall()
 def get_usernames():
     """ Returns all username values from the Users table """
     return db.execute_query("SELECT username FROM Users;").fetchall()

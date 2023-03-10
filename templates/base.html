@@ -8,28 +8,28 @@
     <header>
         <nav>
             <ul>
-                <a class="action" href="{{ url_for('root') }}">Home</a>
+                <a class="action" href="{{ url_for('root') }}"><button class="nav_btn">Home</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('song_reviews') }}">Song Reviews</a>
+                <a class="action" href="{{ url_for('song_reviews') }}"><button class="nav_btn">Song Reviews</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('album_reviews') }}">Album Reviews</a>
+                <a class="action" href="{{ url_for('album_reviews') }}"><button class="nav_btn">Album Reviews</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('songs') }}">Songs</a>
+                <a class="action" href="{{ url_for('songs') }}"><button class="nav_btn">Songs</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('albums') }}">Albums</a>
+                <a class="action" href="{{ url_for('albums') }}"><button class="nav_btn">Albums</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('artists') }}">Artists</a>
+                <a class="action" href="{{ url_for('artists') }}"><button class="nav_btn">Artists</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('users') }}">Users</a>
+                <a class="action" href="{{ url_for('users') }}"><button class="nav_btn">Users</button></a>
             </ul>
             <ul>
-                <a class="action" href="{{ url_for('albums_songs') }}">Albums_Songs</a>
+                <a class="action" href="{{ url_for('albums_songs') }}"><button class="nav_btn">Albums_Songs</button></a>
             </ul>
         </nav>
         {% block header %}{% endblock %}
