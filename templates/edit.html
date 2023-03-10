@@ -140,9 +140,9 @@
       {% endfor %}
     {% endfor %}
 
-    <input type="submit" value="Save">
+    <input class="submit_save_btn" type="submit" value="Save">
 
   </form>
 
-  <a class="back_btn" href="{{ url_for(entity_name + 's') }}">Back to Browse</a>
+  <a href="{{ url_for(entity_name + 's') }}"><button class="back_btn">Back to Browse</button></a>
 {% endblock %}

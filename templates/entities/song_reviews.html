@@ -30,12 +30,12 @@
                     {% if loop.last %}
                         <td>
                             <a class="action" href="{{ url_for('edit', entity_name='song_review', entity_id=song_review['Song Review ID']) }}">
-                                <button>Edit</button>
+                                <button class="edit_btn">Edit</button>
                             </a>
                         </td>
                         <td>
                             <form action="{{ url_for('delete', entity_name='song_review', entity_id=song_review['Song Review ID']) }}" method="post">
-                                <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                                <input class="danger delete_btn" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
                             </form>
                         </td>
                     {% endif %}
@@ -44,6 +44,6 @@
         {% endfor %}
 </table>
 
-<a href="{{ url_for('add_review', review_type='song') }}"><button>Add a Song Review</button></a>
+<a href="{{ url_for('add_review', review_type='song') }}"><button class="add_btn">Add a Song Review</button></a>
 
 {% endblock %}

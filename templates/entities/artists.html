@@ -31,12 +31,12 @@
                         
                             <td>
                                 <a class="action" href="{{ url_for('edit', entity_name='artist', entity_id=artist['Artist ID']) }}">
-                                    <button>Edit</button>
+                                    <button class="edit_btn">Edit</button>
                                 </a>
                             </td>
                             <td>
                                 <form action="{{ url_for('delete', entity_name='artist', entity_id=artist['Artist ID']) }}" method="post">
-                                    <input class="danger" type="submit" value="Delete" onclick="return confirm('Are you sure?');">
+                                    <input class="danger delete_btn" type="submit" value="Delete" onclick="return confirm('Deleting this Artist will delete all Songs and Albums by them as well. Would you still like to proceed?');">
                                 </form>
                             </td>
                     {% endif %}
@@ -45,6 +45,6 @@
         {% endfor %}
 </table>
 
-<a class="add_btn" href="{{ url_for('add_entity', entity_name='artist') }}"><button>Add an Artist</button></a>
+<a href="{{ url_for('add_entity', entity_name='artist') }}"><button class="add_btn">Add an Artist</button></a>
 
 {% endblock %}

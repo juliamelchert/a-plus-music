@@ -62,9 +62,9 @@
       {% endif %}
     {% endfor %}
 
-    <br><input type="submit" value="Add">
+    <br><input class="submit_add_btn" type="submit" value="Add">
 
   </form>
 
-  <a class="back_btn" href="{{ url_for(entity_name + 's') }}">Back to Browse</a>
+  <a href="{{ url_for(entity_name + 's') }}"><button class="back_btn">Back to Browse</button></a>
 {% endblock %}
