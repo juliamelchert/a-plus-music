@@ -50,7 +50,7 @@
       </select><br>
     {% endif %}
     
-    {% for key in entity_results[0].keys() %}
+    {% for key in entity_results %}
       <!-- Does not display primary/foreign keys or average song/album ratings -->
       {% if key != entity_name + '_id' and key[:3] != "avg" and key[-3:] != '_id' %}
         <label for="{{ key }}">{{ key.capitalize() }}:</label>

@@ -12,11 +12,19 @@
 <table>
     <thead>
         <tr>
-            <!-- Getting column names -->
-            {% for key in songs[0].keys() %}
-                <th>{{ key }}</th>
-            {% endfor %}
-
+            {% if songs|length != 0 %}
+                <!-- Getting column names -->
+                {% for key in songs[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <!-- There were no results, so manually input column names for empty table -->
+                <th>Song ID</th>
+                <th>Song</th>
+                <th>Artist</th>
+                <th>Genre</th>
+                <th>Average Rating</th>
+            {% endif %}
             <th>Edit</th>
             <th>Delete</th>
         </tr>

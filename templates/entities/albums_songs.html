@@ -12,11 +12,17 @@
 <table>
     <thead>
         <tr>
-            <!-- Iterate through each key in the first entry to get the column name -->
-            {% for key in albums_songs[0].keys() %}
-                <th>{{ key }}</th>
-            {% endfor %}
-
+            {% if albums_songs|length != 0 %}
+                <!-- Iterate through each key in the first entry to get the column name -->
+                {% for key in albums_songs[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <!-- There were no results, so manually input column names for empty table -->
+                <th>Albums Songs ID</th>
+                <th>Album</th>
+                <th>Song</th>
+            {% endif %}
             <th>Edit</th>
             <th>Delete</th>
         </tr>

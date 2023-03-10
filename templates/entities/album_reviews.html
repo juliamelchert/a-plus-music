@@ -12,11 +12,18 @@
 <table>
     <thead>
         <tr>
-            <!-- Iterate through each key in the first entry to get the column name -->
-            {% for key in album_reviews[0].keys() %}
-                <th>{{ key }}</th>
-            {% endfor %}
-
+            {% if album_reviews|length != 0 %}
+                <!-- Iterate through each key in the first entry to get the column name -->
+                {% for key in album_reviews[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>Album Review ID</th>
+                <th>Album</th>
+                <th>User</th>
+                <th>Rating</th>
+                <th>Review</th>
+            {% endif %}
             <th>Edit</th>
             <th>Delete</th>
         </tr>

@@ -73,9 +73,10 @@ def add_entity(entity_name):
     # Handle GET requests from loading the page
     if request.method == "GET":
         if entity_name == "albums_song":
-            results = get_star_albums_songs()
+            results = get_albums_songs_columns()
+            print(results)
         else:
-            results = get_star_entity(entity_name)
+            results = get_entity_columns(entity_name)
 
         # Dynamically generates drop-down menus for different entities
         if entity_name == "song" or entity_name == "album":

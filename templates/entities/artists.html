@@ -12,11 +12,15 @@
 <table>
     <thead>
         <tr>
-            <!-- Getting column names -->
-            {% for key in artists[0].keys() %}
-                <th>{{ key }}</th>
-            {% endfor %}
-
+            {% if artists|length != 0 %}
+                <!-- Getting column names -->
+                {% for key in artists[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+            {% else %}
+                <th>Artist ID</th>
+                <th>Artist</th>
+            {% endif %}
             <th>Edit</th>
             <th>Delete</th>
         </tr>

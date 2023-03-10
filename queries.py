@@ -34,7 +34,7 @@ def get_all_song_reviews():
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " UNION ALL"
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'deleted_user') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'Deleted User') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
                              " ORDER BY `Song Review ID` ASC;")).fetchall()
@@ -116,6 +116,10 @@ def get_star_albums_songs():
     """ Returns all information from the Albums_Songs table, without aliases """
     return db.execute_query(f"SELECT * FROM Albums_Songs;").fetchall()
 
+def get_albums_songs_columns():
+    """ Returns the names of all of the columns in the Albums_Songs table """
+    return tuple(column['Field'] for column in db.execute_query("DESCRIBE Albums_Songs;").fetchall())
+
 def get_albums_song_song_id(albums_song_id) -> int:
     """ Returns the song_id value of the Albums_Song with the given ID """
     return db.execute_query(f"SELECT song_id FROM Albums_Songs WHERE albums_song_id = {albums_song_id}").fetchone()['song_id']
@@ -152,8 +156,11 @@ def check_albums_song_exists(album_id, song_id) -> int:
 
 def get_all_artists():
     """ Returns aliased information about all Artists """
-    return db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
+    val = db.execute_query(("SELECT Artists.artist_id AS 'Artist ID', Artists.name AS Artist FROM Artists"
                              " ORDER BY 'Artist ID' ASC;")).fetchall()
+
+    print(val)
+    return val
 
 def get_artist_names():
     """ Returns all name values from the Artists table """
@@ -228,7 +235,7 @@ def delete_song(song_id) -> None:
 
 def get_all_users():
     """ Returns aliased information about all Users """
-    return db.execute_query(("SELECT Users.user_id AS 'User ID', username AS User, email AS 'E-mail' FROM Users"
+    return db.execute_query(("SELECT Users.user_id AS 'User ID', username AS Username, email AS 'E-mail' FROM Users"
                              " ORDER BY 'User ID' ASC;")).fetchall()
 def get_usernames():
     """ Returns all username values from the Users table """
@@ -259,6 +266,10 @@ def delete_user(user_id) -> None:
 def get_star_entity(entity_name):
     """  """
     return db.execute_query(f"SELECT * FROM {entity_name.capitalize()}s;").fetchall()
+
+def get_entity_columns(entity_name):
+    """ Returns the names of all of the columns in the given entity's table """
+    return tuple(column['Field'] for column in db.execute_query(f"DESCRIBE {entity_name.capitalize()}s").fetchall())
 
 def get_star_entity_where_id(entity_name, id):
     """ Gets all of the rows from entity_name's table where the entity's primary key ID matches id """
