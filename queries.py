@@ -160,6 +160,10 @@ def get_albums_song_album_id(albums_song_id) -> int:
     """ Returns the album_id value of the Albums_Song with the given ID """
     return db.execute_query(f"SELECT album_id FROM Albums_Songs WHERE albums_song_id = {albums_song_id}").fetchone()['album_id']
 
+def get_albums_song_data_from_id(albums_song_id) -> int:
+    """ Returns the album_id and song_id values of the Albums_Song with the given ID """
+    return db.execute_query(f"SELECT * FROM Albums_Songs WHERE albums_song_id = {albums_song_id}").fetchone()
+
 def add_albums_song(album_id, song_id) -> None:
     """ Inserts a new Albums_Songs entity with the given album_id and song_id """
     db.execute_query(f"INSERT INTO Albums_Songs (album_id, song_id) VALUES ('{album_id}', '{song_id}')")
@@ -220,6 +224,14 @@ def delete_artist(artist_id) -> None:
     db.execute_query("SET foreign_key_checks = 0;")
     db.execute_query(f"DELETE FROM Artists WHERE artist_id = {artist_id}")
 
+def check_artist_exists(name) -> int:
+    """
+    Checks if an Artist with the given name already exists.
+    Returns 0 if it does not exist, and returns 1 if it does exist.
+    """
+    query = f"SELECT EXISTS(SELECT * FROM Artists WHERE name = '{name}')"
+    return list((db.execute_query(query).fetchone()).values())[0]
+
 ##################################################
 #                                                #
 # SONG QUERIES                                   #
@@ -277,6 +289,10 @@ def get_username_from_user_id(user_id) -> str:
 
     return db.execute_query(f"SELECT username FROM Users WHERE user_id = {user_id}").fetchone()['username']
 
+def get_email_from_user_id(user_id) -> str:
+    """ Returns the corresponding email value for the given user_id """
+    return db.execute_query(f"SELECT email FROM Users WHERE user_id = {user_id}").fetchone()['email']
+
 def get_user_id_from_username(username) -> int:
     """ Returns the corresponding user_id value for the given username """
     return int(db.execute_query(f"SELECT user_id FROM Users WHERE username = '{username}'").fetchone()['user_id'])
@@ -292,6 +308,22 @@ def edit_user(username, email, user_id) -> None:
 def delete_user(user_id) -> None:
     """ Deletes a User entity using its unique user_id """
     db.execute_query(f"DELETE FROM Users WHERE user_id = {user_id}")
+
+def check_user_username_exists(username) -> int:
+    """
+    Checks if a User with the given username already exists.
+    Returns 0 if it does not exist, and returns 1 if it does exist.
+    """
+    query = f"SELECT EXISTS(SELECT * FROM Users WHERE username = '{username}')"
+    return list((db.execute_query(query).fetchone()).values())[0]
+
+def check_user_email_exists(email) -> int:
+    """
+    Checks if a User with the given email already exists.
+    Returns 0 if it does not exist, and returns 1 if it does exist.
+    """
+    query = f"SELECT EXISTS(SELECT * FROM Users WHERE email = '{email}')"
+    return list((db.execute_query(query).fetchone()).values())[0]
 
 ##################################################
 #                                                #

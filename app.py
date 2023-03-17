@@ -121,13 +121,19 @@ def add_entity(entity_name):
 
         # Insert into Artists table
         elif entity_name == "artist":
-            add_artist(request.form['name'])
-            return redirect(url_for("artists"))
+            if check_already_exists(entity_name, [request.form['name']]) == 1:
+                return redirect(url_for("add_entity", entity_name=entity_name))
+            else:
+                add_artist(request.form['name'])
+                return redirect(url_for("artists"))
 
         # Insert into Users table
         elif entity_name == "user":
-            add_user(request.form['username'], request.form['email'])
-            return redirect(url_for("users"))
+            if check_already_exists(entity_name, [request.form['username'], request.form['email']]) == 1:
+                return redirect(url_for("add_entity", entity_name=entity_name))
+            else:
+                add_user(request.form['username'], request.form['email'])
+                return redirect(url_for("users"))
         
         # Insert into Albums_Songs table
         elif entity_name == "albums_song":
@@ -135,13 +141,60 @@ def add_entity(entity_name):
             song_id = get_song_id_from_title(request.form['fk_data_2'])
 
             # If the entry already exists, an error is flashed since Albums_Songs additions must be unique
-            if check_albums_song_exists(album_id, song_id) == 1:
-                flash("This Albums_Songs entry already exists.")
+            if check_already_exists(entity_name, [album_id, song_id]) == 1:
                 return redirect(url_for("add_entity", entity_name=entity_name))
             # If the Albums_Songs entry doesn't already exist, it's added
             else:
                 add_albums_song(album_id, song_id)
                 return redirect(url_for("albums_songs"))
+
+def check_already_exists(entity_name, list_of_args, entity_id=None) -> int:
+    """ 
+    Checks if an entity with the given arguments already exists, and flashes an error if so.
+    Works for Users, Albums_Songs, and Artists, since these tables have attributes with UNIQUE constraints.
+    Returns 1 if the entry already exists, otherwise returns 0.
+    """
+    if entity_name == "user":
+        if check_user_username_exists(list_of_args[0]) == 1:
+            # When editing, don't flash an error if the username remained the same
+            if entity_id is not None:
+                if get_username_from_user_id(entity_id) != list_of_args[0]:
+                    flash("A User with this username already exists.")
+                    return 1
+            # When adding, flash an error if a duplicate username is entered
+            else:
+                flash("A User with this username already exists.")
+                return 1
+
+        if check_user_email_exists(list_of_args[1]) == 1:
+            # When editing, don't flash an error if the email remained the same
+            if entity_id is not None:
+                if get_email_from_user_id(entity_id) != list_of_args[1]:
+                    flash("A User with this email already exists.")
+                    return 1
+            # When adding, flash an error if a duplicate email is entered
+            else:
+                flash("A User with this email already exists.")
+                return 1
+
+    elif entity_name == "albums_song":
+        if check_albums_song_exists(list_of_args[0], list_of_args[1]) == 1:
+            if entity_id is not None:
+                print(get_albums_song_data_from_id(entity_id))
+
+            flash("This Albums_Songs entry already exists.")
+            return 1
+
+    elif entity_name == "artist":
+        if check_artist_exists(list_of_args[0]) == 1:
+            if entity_id is not None:
+                if get_artist_name_from_id(entity_id) == list_of_args[0]:
+                    return 0
+
+            flash("An Artist with this name already exists.")
+            return 1
+
+    return 0
     
 def capitalize_entity_name(original_entity_name):
     """ Fixes the capitalization of an entity name such that it can be used as the table name in a query """
@@ -195,15 +248,28 @@ def edit(entity_name, entity_id):
             edit_album(get_artist_id_from_name(request.form['artist_fk_data']), request.form['album_title'], request.form['album_genre'], entity_id)
 
         elif entity_name == "artist":
-            edit_artist(request.form['name'], entity_id)
+            if check_already_exists(entity_name, [request.form['name']], entity_id) == 1:
+                return redirect(url_for("edit", entity_name=entity_name, entity_id=entity_id))
+            else:
+                edit_artist(request.form['name'], entity_id)
+                return redirect(url_for("artists"))
         
         elif entity_name == "user":
-            edit_user(request.form['username'], request.form['email'], entity_id)
+            if check_already_exists(entity_name, [request.form['username'], request.form['email']], entity_id) == 1:
+                return redirect(url_for("edit", entity_name=entity_name, entity_id=entity_id))
+            else:
+                edit_user(request.form['username'], request.form['email'], entity_id)
+                return redirect(url_for("users"))
 
         elif entity_name == "albums_song":
             album_id = get_album_id_from_title(request.form['album_fk_data'])
             song_id = get_song_id_from_title(request.form['song_fk_data'])
-            edit_albums_song(album_id, song_id, entity_id)
+
+            if check_already_exists(entity_name, [album_id, song_id], entity_id) == 1:
+                return redirect(url_for("edit", entity_name=entity_name, entity_id=entity_id))
+            else:
+                edit_albums_song(album_id, song_id, entity_id)
+                return redirect(url_for("albums_songs"))
 
         elif entity_name == "album_review":
             user = request.form['user_fk_data']

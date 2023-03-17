@@ -12,6 +12,17 @@
 {% endblock %}
 
 {% block content %}
+
+  <!-- Flashes any error messages if UNIQUE constrains are not met after edits are attempted -->
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      {% for message in messages %}
+        <p class="flashes" ><strong>Error:</strong> {{ message }}</p>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+
   <form method="post">
     {% for entity in entity_results %}
       {% if loop.first %}

@@ -12,6 +12,8 @@
 {% endblock %}
 
 {% block content %}
+
+  <!-- Flashes any error messages if UNIQUE constrains are not met after addition is attempted -->
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       {% for message in messages %}
