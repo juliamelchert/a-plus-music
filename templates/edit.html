@@ -143,7 +143,8 @@
           <label for="{{ key }}">{{ key.capitalize() }}:</label>
 
           <!-- Creates dropdown menu for ratings when editing album_reviews and song_reviews -->
-          {% if key[-6:] == 'rating' %}
+          {% if entity_name == "album_review" or entity_name == "song_review" %}
+            {% if key[-6:] == "rating" %}
             <select name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required>
               {% for i in range(1, 6) %}
                 {% if i == entity[key] %}
@@ -154,6 +155,12 @@
               {% endfor %}
             </select>
             <br>
+
+            {% elif key[-4:] == "body" %}
+            <!-- Creates a textarea for review bodies when editing album_reviews and song_reviews -->
+            <textarea name="{{ key }}" id="{{ key }}" class="review_body">{{ entity[key] }}</textarea>
+            <br>
+            {% endif %}
 
           <!-- Creates general input fields for all other inputs -->
           {% else %}

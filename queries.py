@@ -9,11 +9,11 @@ import database.db_connector as db
 ##### ALBUM REVIEWS ######
 def get_all_album_reviews():
     """ Returns aliased information about all Album_Reviews """
-    return db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
+    return db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, IF(album_review_body='', 'None', album_review_body) AS Review FROM Album_Reviews"
                              " JOIN Users ON Users.user_id = Album_Reviews.user_id"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " UNION ALL"
-                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'N/A') AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
+                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'N/A') AS User, album_rating AS Rating, IF(album_review_body='', 'None', album_review_body) AS Review FROM Album_Reviews"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " WHERE (SELECT ISNULL(Album_Reviews.user_id)) = 1"
                              " ORDER BY `Album Review ID` ASC;")).fetchall()
@@ -46,11 +46,11 @@ def delete_album_review(album_review_id) -> None:
 def get_all_song_reviews():
     """ Returns aliased information about all Song_Reviews """
     return db.execute_query(("SELECT * FROM ("
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, IF(song_review_body='', 'None', song_review_body) AS Review FROM Song_Reviews"
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " UNION ALL"
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'N/A') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'N/A') AS User, song_rating AS Rating, IF(song_review_body='', 'None', song_review_body) AS Review FROM Song_Reviews"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
                              " ORDER BY `Song Review ID` ASC;")).fetchall()
