@@ -22,13 +22,13 @@
           {% if entity_name == 'album' or entity_name == 'song' %}
             <label for="artist_fk_data">Artist:</label>
             <select name="artist_fk_data" id="artist-fk-data" required>
-              {% for item in artist_fk_data %}
+              {% for item in fk_data_1 %}
                 {% if loop.first %}
-                  <option value="{{ current_artist }}">{{ current_artist }}</option>
-                  {% if item['name'] != current_artist %}
+                  <option value="{{ current_fk_1 }}">{{ current_fk_1 }}</option>
+                  {% if item['name'] != current_fk_1 %}
                     <option value="{{ item['name'] }}">{{ item['name'] }}</option>
                   {% endif %}
-                {% elif item['name'] != current_artist %}
+                {% elif item['name'] != current_fk_1 %}
                   <option value="{{ item['name'] }}">{{ item['name'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -37,15 +37,15 @@
 
           <!-- Add album drop-down selection when adding an albums_song -->
           {% if entity_name == 'albums_song' %}
-            <label for="album_fk">Album:</label>
+            <label for="album_fk_data">Album:</label>
             <select name="album_fk_data" id="album-fk-data" required>
-              {% for item in album_fk_data %}
+              {% for item in fk_data_2 %}
                 {% if loop.first %}
-                  <option value="{{ current_album }}">{{ current_album }}</option>
-                  {% if item['album_title'] != current_album %}
+                  <option value="{{ current_fk_2 }}">{{ current_fk_2 }}</option>
+                  {% if item['album_title'] != current_fk_2 %}
                     <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
                   {% endif %}
-                {% elif item['name'] != current_album %}
+                {% elif item['name'] != current_fk_2 %}
                   <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -54,13 +54,13 @@
             <!-- Add song drop-down selection when editing an albums_song -->
             <label for="song_fk">Song:</label>
             <select name="song_fk_data" id="song-fk-data" required>
-              {% for item in artist_fk_data %}
+              {% for item in fk_data_1 %}
                 {% if loop.first %}
-                  <option value="{{ current_artist }}">{{ current_artist }}</option>
-                  {% if item['song_title'] != current_artist %}
+                  <option value="{{ current_fk_1 }}">{{ current_fk_1 }}</option>
+                  {% if item['song_title'] != current_fk_1 %}
                     <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
                   {% endif %}
-                {% elif item['song_title'] != current_artist %}
+                {% elif item['song_title'] != current_fk_1 %}
                   <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -68,15 +68,15 @@
 
             <!-- Add album drop-down selection when adding an album_review -->
             {% elif entity_name == 'album_review' %}
-            <label for="album_fk">Album:</label>
+            <label for="album_fk_data">Album:</label>
             <select name="album_fk_data" id="album-fk-data" required>
-              {% for item in album_fk_data %}
+              {% for item in fk_data_2 %}
                 {% if loop.first %}
-                  <option value="{{ current_album }}">{{ current_album }}</option>
-                  {% if item['album_title'] != current_album %}
+                  <option value="{{ current_fk_2 }}">{{ current_fk_2 }}</option>
+                  {% if item['album_title'] != current_fk_2 %}
                     <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
                   {% endif %}
-                {% elif item['album_title'] != current_album %}
+                {% elif item['album_title'] != current_fk_2 %}
                   <option value="{{ item['album_title'] }}">{{ item['album_title'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -85,13 +85,16 @@
             <!-- Add song drop-down selection when editing an album_review -->
             <label for="user_fk">User:</label>
             <select name="user_fk_data" id="user-fk-data" required>
-              {% for item in artist_fk_data %}
+              {% for item in fk_data_1 %}
                 {% if loop.first %}
-                  <option value="{{ current_artist }}">{{ current_artist }}</option>
-                  {% if item['username'] != current_artist %}
+                  {% if current_fk_1 != "None" %}
+                    <option value="None">None</option>
+                  {% endif %}
+                  <option value="{{ current_fk_1 }}" selected>{{ current_fk_1 }}</option>
+                  {% if item['username'] != current_fk_1 %}
                     <option value="{{ item['username'] }}">{{ item['username'] }}</option>
                   {% endif %}
-                {% elif item['username'] != current_artist %}
+                {% elif item['username'] != current_fk_1 %}
                   <option value="{{ item['username'] }}">{{ item['username'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -101,28 +104,31 @@
             {% elif entity_name == 'song_review' %}
             <label for="song_fk">Song:</label>
             <select name="song_fk_data" id="song-fk-data" required>
-              {% for item in album_fk_data %}
+              {% for item in fk_data_2 %}
                 {% if loop.first %}
-                  <option value="{{ current_album }}">{{ current_album }}</option>
-                  {% if item['song_title'] != current_album %}
+                  <option value="{{ current_fk_2 }}">{{ current_fk_2 }}</option>
+                  {% if item['song_title'] != current_fk_2 %}
                     <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
                   {% endif %}
-                {% elif item['song_title'] != current_album %}
+                {% elif item['song_title'] != current_fk_2 %}
                   <option value="{{ item['song_title'] }}">{{ item['song_title'] }}</option>
                 {% endif %}
               {% endfor %}
             </select><br>
 
-            <!-- Add song drop-down selection when editing an song_review -->
+            <!-- Add user drop-down selection when editing a song_review -->
             <label for="user_fk">User:</label>
             <select name="user_fk_data" id="user-fk-data" required>
-              {% for item in artist_fk_data %}
+              {% for item in fk_data_1 %}
                 {% if loop.first %}
-                  <option value="{{ current_artist }}">{{ current_artist }}</option>
-                  {% if item['username'] != current_artist %}
+                  {% if current_fk_1 != "None" %}
+                    <option value="None">None</option>
+                  {% endif %}
+                  <option value="{{ current_fk_1 }}" selected>{{ current_fk_1 }}</option>
+                  {% if item['username'] != current_fk_1 %}
                     <option value="{{ item['username'] }}">{{ item['username'] }}</option>
                   {% endif %}
-                {% elif item['username'] != current_artist %}
+                {% elif item['username'] != current_fk_1 %}
                   <option value="{{ item['username'] }}">{{ item['username'] }}</option>
                 {% endif %}
               {% endfor %}
@@ -135,7 +141,24 @@
         <!-- Does not display primary/foreign keys or average song/album ratings -->
         {% if key != entity_name + '_id' and key[:3] != "avg" and key[-3:] != '_id' %}
           <label for="{{ key }}">{{ key.capitalize() }}:</label>
-          <input name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required><br>
+
+          <!-- Creates dropdown menu for ratings when editing album_reviews and song_reviews -->
+          {% if key[-6:] == 'rating' %}
+            <select name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required>
+              {% for i in range(1, 6) %}
+                {% if i == entity[key] %}
+                  <option value="{{ i }}" selected>{{ i }}</option>
+                {% else %}
+                  <option value="{{ i }}">{{ i }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <br>
+
+          <!-- Creates general input fields for all other inputs -->
+          {% else %}
+            <input name="{{ key }}" id="{{ key }}" value="{{ entity[key] }}" required><br>
+          {% endif %}
         {% endif %}
       {% endfor %}
     {% endfor %}

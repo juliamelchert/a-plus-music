@@ -60,11 +60,30 @@ def add_review(review_type):
 
     if request.method == "GET":
         results = get_add_review_info(review_type)
+        return render_template("add_review.html", media_type=review_type, media_list=results[0], users=results[1])
 
     elif request.method == "POST":
+
+        # Insert into Album_Reviews table
+        if review_type == "album":
+            user = request.form['username']
+            if user != "None":
+                add_album_review_with_user(get_user_id_from_username(user), get_album_id_from_title(request.form['media_title']), request.form['rating'], request.form['review_body'])
+            else:
+                add_album_review_without_user(get_album_id_from_title(request.form['media_title']), request.form['rating'], request.form['review_body'])
+
+        # Insert into Song_Reviews table
+        elif review_type == "song":
+            user = request.form['username']
+            if user != "None":
+                add_song_review_with_user(get_user_id_from_username(user), get_song_id_from_title(request.form['media_title']), request.form['rating'], request.form['review_body'])
+            else:
+                add_song_review_without_user(get_song_id_from_title(request.form['media_title']), request.form['rating'], request.form['review_body'])
+
         return redirect(url_for(review_type + "_reviews"))
 
-    return render_template("add_review.html", media_type=review_type, media_list=results[0], users=results[1])
+    else:
+        print("We have not implemented support for this kind of HTTP request yet.")
 
 @app.route('/<entity_name>/add', methods=['GET', 'POST'])
 def add_entity(entity_name):
@@ -146,25 +165,25 @@ def edit(entity_name, entity_id):
 
         if entity_name == "Song" or entity_name == "Album":
             current_artist = get_artist_name_from_id(get_current_artist_id_from_table(entity_name, entity_id))
-            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), artist_fk_data=get_artist_names(), current_artist=current_artist, album_fk_data=[], current_album="")
+            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), fk_data_1=get_artist_names(), current_fk_1=current_artist, fk_data_2=[], current_fk_2="")
         
         elif entity_name == "Albums_Song":
             current_song = get_song_title_from_id(get_albums_song_song_id(entity_id))
             current_album = get_album_title_from_id(get_albums_song_album_id(entity_id))
-            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), artist_fk_data=get_song_titles(), current_artist=current_song, album_fk_data=get_album_titles(), current_album=current_album)
+            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), fk_data_1=get_song_titles(), current_fk_1=current_song, fk_data_2=get_album_titles(), current_fk_2=current_album)
         
         elif entity_name == "Album_Review":
             current_user = get_username_from_user_id(get_user_id_from_review_id(entity_name, entity_id))
             current_album = get_album_title_from_id(get_album_id_from_album_review_id(entity_id))
-            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), artist_fk_data=get_usernames(), current_artist=current_user, album_fk_data=get_album_titles(), current_album=current_album)
+            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), fk_data_1=get_usernames(), current_fk_1=current_user, fk_data_2=get_album_titles(), current_fk_2=current_album)
         
         elif entity_name == "Song_Review":
             current_user = get_username_from_user_id(get_user_id_from_review_id(entity_name, entity_id))
             current_song = get_song_title_from_id(get_song_id_from_song_review_id(entity_id))
-            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), artist_fk_data=get_usernames(), current_artist=current_user, album_fk_data=get_song_titles(), current_album=current_song)
+            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), fk_data_1=get_usernames(), current_fk_1=current_user, fk_data_2=get_song_titles(), current_fk_2=current_song)
         
         else:
-            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), artist_fk_data=[], current_artist="", album_fk_data=[], current_album="")
+            return render_template("edit.html", entity_results=results, entity_name=entity_name.lower(), fk_data_1=[], current_fk_1="", fk_data_2=[], current_fk_2="")
 
     # This if-statement section is adapted from the official Flask tutorial (https://flask.palletsprojects.com/en/2.2.x/tutorial/)
     # Handle POST requests from editing an entity
@@ -185,6 +204,20 @@ def edit(entity_name, entity_id):
             album_id = get_album_id_from_title(request.form['album_fk_data'])
             song_id = get_song_id_from_title(request.form['song_fk_data'])
             edit_albums_song(album_id, song_id, entity_id)
+
+        elif entity_name == "album_review":
+            user = request.form['user_fk_data']
+            if user != "None":
+                edit_album_review_with_user(get_user_id_from_username(user), get_album_id_from_title(request.form['album_fk_data']), request.form['album_rating'], request.form['album_review_body'], entity_id)
+            else:
+                edit_album_review_without_user(get_album_id_from_title(request.form['album_fk_data']), request.form['album_rating'], request.form['album_review_body'], entity_id)
+
+        elif entity_name == "song_review":
+            user = request.form['user_fk_data']
+            if user != "None":
+                edit_song_review_with_user(get_user_id_from_username(user), get_song_id_from_title(request.form['song_fk_data']), request.form['song_rating'], request.form['song_review_body'], entity_id)
+            else:
+                edit_song_review_without_user(get_song_id_from_title(request.form['song_fk_data']), request.form['song_rating'], request.form['song_review_body'], entity_id)
 
         return redirect(url_for(entity_name + "s"))
 

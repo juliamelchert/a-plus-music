@@ -16,16 +16,17 @@
     <select name="media_title" id="media_title" required>
       {% for item in media_list %}
         {% for key in item.keys() %}
-          <option value="media_title">{{ item[key] }}</option>
+          <option value="{{ item[key] }}">{{ item[key] }}</option>
         {% endfor %}
       {% endfor %}
     </select>
 
     <br><label for="user">User:</label>
-    <select name="usernames" id="usernames" required>
+    <select name="username" id="username">
+      <option value="None">None</option>
       {% for item in users %}
         {% for key in item.keys() %}
-          <option value="usernames">{{ item[key] }}</option>
+          <option value="{{ item[key] }}">{{ item[key] }}</option>
         {% endfor %}
       {% endfor %}
     </select>

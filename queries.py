@@ -13,7 +13,7 @@ def get_all_album_reviews():
                              " JOIN Users ON Users.user_id = Album_Reviews.user_id"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " UNION ALL"
-                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'deleted_user') AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
+                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'N/A') AS User, album_rating AS Rating, album_review_body AS Review FROM Album_Reviews"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " WHERE (SELECT ISNULL(Album_Reviews.user_id)) = 1"
                              " ORDER BY `Album Review ID` ASC;")).fetchall()
@@ -21,6 +21,22 @@ def get_all_album_reviews():
 def get_album_id_from_album_review_id(album_review_id) -> int:
     """ Returns the corresponding album_id for the given album_review_id """
     return int(db.execute_query(f"SELECT album_id FROM Album_Reviews WHERE album_review_id = {album_review_id}").fetchone()['album_id'])
+
+def add_album_review_with_user(user_id, album_id, album_rating, album_review_body) -> None:
+    """ Inserts a new Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
+    db.execute_query(f"INSERT INTO Album_Reviews (user_id, album_id, album_rating, album_review_body) VALUES ('{user_id}', '{album_id}', '{album_rating}', '{album_review_body}')")
+
+def add_album_review_without_user(album_id, album_rating, album_review_body) -> None:
+    """ Inserts a new Album_Review entity with the given album_id, album_rating, and album_review_body """
+    db.execute_query(f"INSERT INTO Album_Reviews (album_id, album_rating, album_review_body) VALUES ('{album_id}', '{album_rating}', '{album_review_body}')")
+
+def edit_album_review_with_user(user_id, album_id, album_rating, album_review_body, album_review_id) -> None:
+    """ Updates an existing Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
+    db.execute_query(f"UPDATE Album_Reviews SET user_id = '{user_id}', album_id = '{album_id}', album_rating = '{album_rating}', album_review_body = '{album_review_body}' WHERE album_review_id = {album_review_id}")
+
+def edit_album_review_without_user(album_id, album_rating, album_review_body, album_review_id) -> None:
+    """ Updates an existing Album_Review entity with the given album_id, album_rating, and album_review_body """
+    db.execute_query(f"UPDATE Album_Reviews SET user_id = NULL, album_id = '{album_id}', album_rating = '{album_rating}', album_review_body = '{album_review_body}' WHERE album_review_id = {album_review_id}")
 
 def delete_album_review(album_review_id) -> None:
     """ Deletes an Album_Review entity using its unique album_review_id """
@@ -34,7 +50,7 @@ def get_all_song_reviews():
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " UNION ALL"
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'Deleted User') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'N/A') AS User, song_rating AS Rating, song_review_body AS Review FROM Song_Reviews"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
                              " ORDER BY `Song Review ID` ASC;")).fetchall()
@@ -42,6 +58,22 @@ def get_all_song_reviews():
 def get_song_id_from_song_review_id(song_review_id) -> int:
     """ Returns the corresponding song_id for the given song_review_id """
     return int(db.execute_query(f"SELECT song_id FROM Song_Reviews WHERE song_review_id = {song_review_id}").fetchone()['song_id'])
+
+def add_song_review_with_user(user_id, song_id, song_rating, song_review_body) -> None:
+    """ Inserts a new Song_Reviews entity with the given user_id, song_id, song_rating, and song_review_body """
+    db.execute_query(f"INSERT INTO Song_Reviews (user_id, song_id, song_rating, song_review_body) VALUES ('{user_id}', '{song_id}', '{song_rating}', '{song_review_body}')")
+
+def add_song_review_without_user(song_id, song_rating, song_review_body) -> None:
+    """ Inserts a new Song_Reviews entity with the given song_id, song_rating, and song_review_body """
+    db.execute_query(f"INSERT INTO Song_Reviews (song_id, song_rating, song_review_body) VALUES ('{song_id}', '{song_rating}', '{song_review_body}')")
+
+def edit_song_review_with_user(user_id, song_id, song_rating, song_review_body, song_review_id) -> None:
+    """ Updates an existing Song_Review entity with the given user_id, song_id, song_rating, and song_review_body """
+    db.execute_query(f"UPDATE Song_Reviews SET user_id = '{user_id}', song_id = '{song_id}', song_rating = '{song_rating}', song_review_body = '{song_review_body}' WHERE song_review_id = {song_review_id}")
+
+def edit_song_review_without_user(song_id, song_rating, song_review_body, song_review_id) -> None:
+    """ Updates an existing Song_Review entity with the given song_id, song_rating, and song_review_body """
+    db.execute_query(f"UPDATE Song_Reviews SET user_id = NULL, song_id = '{song_id}', song_rating = '{song_rating}', song_review_body = '{song_review_body}' WHERE song_review_id = {song_review_id}")
 
 def delete_song_review(song_review_id) -> None:
     """ Deletes an Song_Review entity using its unique song_review_id """
@@ -240,7 +272,14 @@ def get_usernames():
 
 def get_username_from_user_id(user_id) -> str:
     """ Returns the corresponding username value for the given user_id """
+    if user_id is None:
+        return "None"
+
     return db.execute_query(f"SELECT username FROM Users WHERE user_id = {user_id}").fetchone()['username']
+
+def get_user_id_from_username(username) -> int:
+    """ Returns the corresponding user_id value for the given username """
+    return int(db.execute_query(f"SELECT user_id FROM Users WHERE username = '{username}'").fetchone()['user_id'])
 
 def add_user(username, email) -> None:
     """ Inserts a new User entity with the given username and email """
