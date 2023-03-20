@@ -26,8 +26,14 @@
     
     <!-- Create drop-down menus for entities that have foreign keys -->
     {% if entity_name == 'album' or entity_name == 'song' or entity_name == 'albums_song' %}
+    
+      <!-- Add note to Song page about selecting an Album -->
+      {% if entity_name == 'song' %}
+        <p class="note">NOTE: Please create a new Album first if the appropriate Album does not already exist.</p>
+      {% endif %}
+    
       <!-- Add album drop-down selection when adding an albums_song -->
-      {% if entity_name == 'albums_song' %}
+      {% if entity_name == 'albums_song' or entity_name == 'song' %}
         <label for="album_fk">Album:</label>
         <select name="fk_data_1" id="fk-data-1" required>
           {% for item in fk_data_1 %}
@@ -36,7 +42,7 @@
             {% endfor %}
           {% endfor %}
         </select><br>
-      {% endif %}  
+      {% endif %}
     
       <!-- Add artist drop-down selection when adding an album or song, 
            add a song drop-down selection when adding an albums_song -->  

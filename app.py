@@ -98,8 +98,10 @@ def add_entity(entity_name):
             results = get_entity_columns(entity_name)
 
         # Dynamically generates drop-down menus for different entities
-        if entity_name == "song" or entity_name == "album":
+        if entity_name == "album":
             return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=[], fk_data_2=get_artist_names())
+        elif entity_name == "song":
+            return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=get_album_titles(), fk_data_2=get_artist_names())
         elif entity_name == "albums_song":
             return render_template("add_entity.html", entity_results=results, entity_name=entity_name, fk_data_1=get_album_titles(), fk_data_2=get_song_titles())
         else:
@@ -111,7 +113,13 @@ def add_entity(entity_name):
         
         # Insert into Songs table
         if entity_name == "song":
-            add_song(get_artist_id_from_name(request.form['fk_data_2']), request.form['song_title'], request.form['song_genre'])
+            artist_id = get_artist_id_from_name(request.form['fk_data_2'])
+            add_song(artist_id , request.form['song_title'], request.form['song_genre'])
+
+            # Add a new albums_song; doesn't need to check for previous Albums_Song since this is a new Song
+            album_id = get_album_id_from_title(request.form['fk_data_1'])
+            song_id = get_song_id_from_title_and_artist(request.form['song_title'], artist_id)
+            add_albums_song(album_id, song_id)
             return redirect(url_for("songs"))
 
         # Insert into Albums table
@@ -317,5 +325,5 @@ def delete(entity_name, entity_id):
 
 # Listener
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58765))
+    port = int(os.environ.get('PORT', 58766))
     app.run(port=port, debug=True) 

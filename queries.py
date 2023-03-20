@@ -256,6 +256,10 @@ def get_song_title_from_id(song_id) -> str:
     """ Returns the corresponding song_title given a song_id """
     return db.execute_query(f"SELECT song_title FROM Songs WHERE song_id = {song_id}").fetchone()['song_title']
 
+def get_song_id_from_title_and_artist(title, artist_id) -> int:
+    """ Returns the corresponding song_id given a song_title and artist"""
+    return int(db.execute_query(f"SELECT song_id FROM Songs WHERE song_title = '{title}' AND artist_id = '{artist_id}'").fetchone()['song_id'])
+
 def add_song(artist_id, song_title, song_genre) -> None:
     """ Inserts a new Song entity with the given artist_id, song_title, and song_genre """
     db.execute_query(f"INSERT INTO Songs (artist_id, song_title, song_genre) VALUES ('{artist_id}', '{song_title}', '{song_genre}')")
