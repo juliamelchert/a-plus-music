@@ -179,11 +179,17 @@ def check_already_exists(entity_name, list_of_args, entity_id=None) -> int:
 
     elif entity_name == "albums_song":
         if check_albums_song_exists(list_of_args[0], list_of_args[1]) == 1:
+            # When editing, don't flash an error if the email remained the same
             if entity_id is not None:
-                print(get_albums_song_data_from_id(entity_id))
-
-            flash("This Albums_Songs entry already exists.")
-            return 1
+                albums_song_data = get_albums_song_data_from_id(entity_id)
+                if albums_song_data['album_id'] != list_of_args[0] or albums_song_data['song_id'] != list_of_args[1]:
+                    flash("This Albums_Songs entry already exists.")
+                    return 1
+            
+            # When adding, flash an error if a duplicate album_id/song_id pair is entered
+            else:
+                flash("This Albums_Songs entry already exists.")
+                return 1
 
     elif entity_name == "artist":
         if check_artist_exists(list_of_args[0]) == 1:
