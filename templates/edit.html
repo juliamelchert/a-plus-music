@@ -4,8 +4,10 @@
 
 {% block header %}
   <h1>{% block title %}Edit a{% if entity_name[0] == "a" %}n{% endif %}
-    {% if entity_name == "albums_song" %}Albums_Song{% else %}
-    {{ entity_name.capitalize() }} 
+    {% if entity_name == "song_review" %}Song Review
+    {% elif entity_name == "album_review" %}Album Review
+    {% elif entity_name == "albums_song" %}Albums_Song
+    {% else %}{{ entity_name.capitalize() }} 
     {% endif %}
     {% endblock %}
   </h1>
