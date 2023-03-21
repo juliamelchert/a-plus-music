@@ -1,0 +1,14 @@
+<!-- This code is based on the official Flask Documentation on Handling Application Errors (https://flask.palletsprojects.com/en/2.2.x/errorhandling/) -->
+
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Not Found{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <p>Oops... we seem to have made a mistake, sorry!</p>
+  <p>This error is likely due to an invalid URL. Please double check your URL is valid or simply <a href="{{ url_for('index') }}">return to the Home page.</a></p>
+{% endblock %}

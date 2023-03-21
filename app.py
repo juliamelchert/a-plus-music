@@ -1,15 +1,45 @@
-from flask import Flask, render_template, redirect, url_for, request, flash
-import database.db_connector as db
+from flask import Flask, render_template, redirect, url_for, request, flash, abort
+from werkzeug.exceptions import HTTPException
 from queries import *
 import os
 
-# Configuration
+##################################################
+#                                                #
+# CONFIGURATION                                  #
+#                                                #
+##################################################
+
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
-# Routes
+##################################################
+#                                                #
+# ERROR HANDLERS                                 #
+#                                                #
+##################################################
+
+# These error handling functions are based on the official Flask Documentation 
+# on Handling Application Errors (https://flask.palletsprojects.com/en/2.2.x/errorhandling/)
+@app.errorhandler(404)
+def not_found_error(e):
+    return render_template('errors/404.html'), 404
+
+@app.errorhandler(500)
+def internal_server_error(e):
+    return render_template('errors/500.html'), 500
+
+@app.errorhandler(HTTPException)
+def generic_http_error(e):
+    return render_template('errors/http_exception.html', error=e)
+
+##################################################
+#                                                #
+# READ                                           #
+#                                                #
+##################################################
+
 @app.route('/')
-def root():
+def index():
     return render_template("index.html")
 
 @app.route('/album-reviews', methods=['GET', 'POST'])
@@ -54,6 +84,12 @@ def users():
 
     return render_template("entities/users.html", users=get_all_users())
 
+##################################################
+#                                                #
+# CREATE                                         #
+#                                                #
+##################################################
+
 @app.route('/<review_type>-review/add', methods=['GET', 'POST'])
 def add_review(review_type):
     """ Handles creations of Song_Reviews and Album_Reviews """
@@ -84,6 +120,7 @@ def add_review(review_type):
 
     else:
         print("We have not implemented support for this kind of HTTP request yet.")
+        abort(404)
 
 @app.route('/<entity_name>/add', methods=['GET', 'POST'])
 def add_entity(entity_name):
@@ -155,71 +192,16 @@ def add_entity(entity_name):
             else:
                 add_albums_song(album_id, song_id)
                 return redirect(url_for("albums_songs"))
-
-def check_already_exists(entity_name, list_of_args, entity_id=None) -> int:
-    """ 
-    Checks if an entity with the given arguments already exists, and flashes an error if so.
-    Works for Users, Albums_Songs, and Artists, since these tables have attributes with UNIQUE constraints.
-    Returns 1 if the entry already exists, otherwise returns 0.
-    """
-    if entity_name == "user":
-        if check_user_username_exists(list_of_args[0]) == 1:
-            # When editing, don't flash an error if the username remained the same
-            if entity_id is not None:
-                if get_username_from_user_id(entity_id) != list_of_args[0]:
-                    flash("A User with this username already exists.")
-                    return 1
-            # When adding, flash an error if a duplicate username is entered
-            else:
-                flash("A User with this username already exists.")
-                return 1
-
-        if check_user_email_exists(list_of_args[1]) == 1:
-            # When editing, don't flash an error if the email remained the same
-            if entity_id is not None:
-                if get_email_from_user_id(entity_id) != list_of_args[1]:
-                    flash("A User with this email already exists.")
-                    return 1
-            # When adding, flash an error if a duplicate email is entered
-            else:
-                flash("A User with this email already exists.")
-                return 1
-
-    elif entity_name == "albums_song":
-        if check_albums_song_exists(list_of_args[0], list_of_args[1]) == 1:
-            # When editing, don't flash an error if the email remained the same
-            if entity_id is not None:
-                albums_song_data = get_albums_song_data_from_id(entity_id)
-                if albums_song_data['album_id'] != list_of_args[0] or albums_song_data['song_id'] != list_of_args[1]:
-                    flash("This Albums_Songs entry already exists.")
-                    return 1
-            
-            # When adding, flash an error if a duplicate album_id/song_id pair is entered
-            else:
-                flash("This Albums_Songs entry already exists.")
-                return 1
-
-    elif entity_name == "artist":
-        if check_artist_exists(list_of_args[0]) == 1:
-            if entity_id is not None:
-                if get_artist_name_from_id(entity_id) == list_of_args[0]:
-                    return 0
-
-            flash("An Artist with this name already exists.")
-            return 1
-
-    return 0
     
-def capitalize_entity_name(original_entity_name):
-    """ Fixes the capitalization of an entity name such that it can be used as the table name in a query """
-    if original_entity_name == "albums_song":
-        return "Albums_Song"
-    elif original_entity_name == "song_review":
-        return "Song_Review"
-    elif original_entity_name == "album_review":
-        return "Album_Review"
     else:
-        return original_entity_name.capitalize()
+        print("We have not implemented support for this kind of HTTP request yet.")
+        abort(404)
+
+##################################################
+#                                                #
+# UPDATE                                         #
+#                                                #
+##################################################
 
 @app.route('/<entity_name>/edit/<int:entity_id>', methods=('GET', 'POST'))
 def edit(entity_name, entity_id):
@@ -300,6 +282,16 @@ def edit(entity_name, entity_id):
                 edit_song_review_without_user(get_song_id_from_title(request.form['song_fk_data']), request.form['song_rating'], request.form['song_review_body'], entity_id)
 
         return redirect(url_for(entity_name + "s"))
+    
+    else:
+        print("We have not implemented support for this kind of HTTP request yet.")
+        abort(404)
+
+##################################################
+#                                                #
+# DELETE                                         #
+#                                                #
+##################################################
 
 @app.route('/<entity_name>/delete/<int:entity_id>', methods=['GET', 'POST'])
 def delete(entity_name, entity_id):
@@ -323,7 +315,83 @@ def delete(entity_name, entity_id):
 
     return redirect(url_for(entity_name + 's'))
 
-# Listener
+##################################################
+#                                                #
+# SUPPLEMENTAL FUNCTIONS                         #
+#                                                #
+##################################################
+
+def check_already_exists(entity_name, list_of_args, entity_id=None) -> int:
+    """ 
+    Checks if an entity with the given arguments already exists, and flashes an error if so.
+    Works for Users, Albums_Songs, and Artists, since these tables have attributes with UNIQUE constraints.
+    Returns 1 if the entry already exists, otherwise returns 0.
+    """
+    if entity_name == "user":
+        if check_user_username_exists(list_of_args[0]) == 1:
+            # When editing, don't flash an error if the username remained the same
+            if entity_id is not None:
+                if get_username_from_user_id(entity_id) != list_of_args[0]:
+                    flash("A User with this username already exists.")
+                    return 1
+            # When adding, flash an error if a duplicate username is entered
+            else:
+                flash("A User with this username already exists.")
+                return 1
+
+        if check_user_email_exists(list_of_args[1]) == 1:
+            # When editing, don't flash an error if the email remained the same
+            if entity_id is not None:
+                if get_email_from_user_id(entity_id) != list_of_args[1]:
+                    flash("A User with this email already exists.")
+                    return 1
+            # When adding, flash an error if a duplicate email is entered
+            else:
+                flash("A User with this email already exists.")
+                return 1
+
+    elif entity_name == "albums_song":
+        if check_albums_song_exists(list_of_args[0], list_of_args[1]) == 1:
+            # When editing, don't flash an error if the email remained the same
+            if entity_id is not None:
+                albums_song_data = get_albums_song_data_from_id(entity_id)
+                if albums_song_data['album_id'] != list_of_args[0] or albums_song_data['song_id'] != list_of_args[1]:
+                    flash("This Albums_Songs entry already exists.")
+                    return 1
+            
+            # When adding, flash an error if a duplicate album_id/song_id pair is entered
+            else:
+                flash("This Albums_Songs entry already exists.")
+                return 1
+
+    elif entity_name == "artist":
+        if check_artist_exists(list_of_args[0]) == 1:
+            if entity_id is not None:
+                if get_artist_name_from_id(entity_id) == list_of_args[0]:
+                    return 0
+
+            flash("An Artist with this name already exists.")
+            return 1
+
+    return 0
+    
+def capitalize_entity_name(original_entity_name):
+    """ Fixes the capitalization of an entity name such that it can be used as the table name in a query """
+    if original_entity_name == "albums_song":
+        return "Albums_Song"
+    elif original_entity_name == "song_review":
+        return "Song_Review"
+    elif original_entity_name == "album_review":
+        return "Album_Review"
+    else:
+        return original_entity_name.capitalize()
+
+##################################################
+#                                                #
+# LISTENER                                       #
+#                                                #
+##################################################
+
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58766))
+    port = int(os.environ.get('PORT', 58765))
     app.run(port=port, debug=True) 

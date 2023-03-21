@@ -36,20 +36,13 @@ def execute_query(query = None, query_params = ()):
         print("query is empty! Please pass a SQL query in query")
         return None
 
-    print("Executing %s with %s" % (query, query_params));
+    # print("Executing %s with %s" % (query, query_params));
 
-    # Create a cursor to execute query. Why? Because apparently they optimize execution by retaining a reference according to PEP0249
+    # Create a cursor to execute query
     cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-    '''
-    params = tuple()
-    #create a tuple of paramters to send with the query
-    for q in query_params:
-        params = params + (q)
-    '''
-    #TODO: Sanitize the query before executing it!!!
     cursor.execute(query, query_params)
-    # this will actually commit any changes to the database. without this no
-    # changes will be committed!
+
+    # Commit changes to the database
     db_connection.commit();
     return cursor

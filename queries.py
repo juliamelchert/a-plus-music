@@ -9,11 +9,11 @@ import database.db_connector as db
 ##### ALBUM REVIEWS ######
 def get_all_album_reviews():
     """ Returns aliased information about all Album_Reviews """
-    return db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, IF(album_review_body='', 'None', album_review_body) AS Review FROM Album_Reviews"
+    return db.execute_query(("SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, Users.username AS User, album_rating AS Rating, IF(album_review_body='', 'N/A', album_review_body) AS Review FROM Album_Reviews"
                              " JOIN Users ON Users.user_id = Album_Reviews.user_id"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " UNION ALL"
-                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'N/A') AS User, album_rating AS Rating, IF(album_review_body='', 'None', album_review_body) AS Review FROM Album_Reviews"
+                             " SELECT Album_Reviews.album_review_id AS 'Album Review ID', Albums.album_title AS Album, IFNULL(Album_Reviews.user_id, 'N/A') AS User, album_rating AS Rating, IF(album_review_body='', 'N/A', album_review_body) AS Review FROM Album_Reviews"
                              " JOIN Albums ON Albums.album_id = Album_Reviews.album_id"
                              " WHERE (SELECT ISNULL(Album_Reviews.user_id)) = 1"
                              " ORDER BY `Album Review ID` ASC;")).fetchall()
@@ -46,11 +46,11 @@ def delete_album_review(album_review_id) -> None:
 def get_all_song_reviews():
     """ Returns aliased information about all Song_Reviews """
     return db.execute_query(("SELECT * FROM ("
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, IF(song_review_body='', 'None', song_review_body) AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, Users.username AS User, song_rating AS Rating, IF(song_review_body='', 'N/A', song_review_body) AS Review FROM Song_Reviews"
                              " JOIN Users ON Users.user_id = Song_Reviews.user_id"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " UNION ALL"
-                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'N/A') AS User, song_rating AS Rating, IF(song_review_body='', 'None', song_review_body) AS Review FROM Song_Reviews"
+                             " SELECT Song_Reviews.song_review_id AS 'Song Review ID', Songs.song_title AS Song, IFNULL(Song_Reviews.user_id, 'N/A') AS User, song_rating AS Rating, IF(song_review_body='', 'N/A', song_review_body) AS Review FROM Song_Reviews"
                              " JOIN Songs ON Songs.song_id = Song_Reviews.song_id"
                              " WHERE (SELECT ISNULL(Song_Reviews.user_id)) = 1) AS a"
                              " ORDER BY `Song Review ID` ASC;")).fetchall()
@@ -103,7 +103,7 @@ def get_user_id_from_review_id(review_type, review_id):
 
 def get_all_albums():
     """ Returns aliased information about all Albums """
-    return db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, Albums.avg_album_rating AS 'Average Rating' FROM Albums"
+    return db.execute_query(("SELECT Albums.album_id AS 'Album ID', Albums.album_title AS Album, Artists.name AS Artist, Albums.album_genre AS Genre, IF(Albums.avg_album_rating = 0.0, 'N/A', Albums.avg_album_rating) AS 'Average Rating' FROM Albums"
                              " JOIN Artists ON Artists.artist_id = Albums.artist_id"
                              " ORDER BY `Album ID` ASC;")).fetchall()
 
@@ -240,7 +240,7 @@ def check_artist_exists(name) -> int:
 
 def get_all_songs():
     """ Returns aliased information about all Songs """
-    return db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, Songs.avg_song_rating AS 'Average Rating' FROM Songs"
+    return db.execute_query(("SELECT Songs.song_id AS 'Song ID', Songs.song_title AS Song, Artists.name AS Artist, Songs.song_genre AS Genre, IF(Songs.avg_song_rating = 0.0, 'N/A', Songs.avg_song_rating) AS 'Average Rating' FROM Songs"
                              " JOIN Artists ON Artists.artist_id = Songs.artist_id"
                              " ORDER BY `Song ID` ASC;")).fetchall()
 

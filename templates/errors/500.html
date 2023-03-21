@@ -1,0 +1,15 @@
+<!-- This code is sourced from the official Flask Documentation on Handling Application Errors (https://flask.palletsprojects.com/en/2.2.x/errorhandling/) -->
+
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}Internal Server Error{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <p>Oops... we seem to have made a mistake, sorry!</p>
+  <p>The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.</p>
+  <p><a href="{{ url_for('index') }}">Return to the Home page</a></p>
+{% endblock %}

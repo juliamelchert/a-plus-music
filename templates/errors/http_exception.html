@@ -1,0 +1,16 @@
+<!-- This code is based on the official Flask Documentation on Handling Application Errors (https://flask.palletsprojects.com/en/2.2.x/errorhandling/) -->
+
+<!DOCTYPE html>
+
+{% extends 'base.html' %}
+
+{% block header %}
+  <h1>{% block title %}{{ error.code }} {{ error.name }}{% endblock %}</h1>
+{% endblock %}
+
+{% block content %}
+  <p>Oops... we seem to have made a mistake, sorry!</p>
+  <p>Here is a description of the issue:</p>
+  <p>{{ error.description }}</p>
+  <p><a href="{{ url_for('index') }}">Return to the Home page.</a></p>
+{% endblock %}
