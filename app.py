@@ -211,6 +211,7 @@ def edit(entity_name, entity_id):
     if request.method == "GET":
         entity_name = capitalize_entity_name(entity_name)
         results = get_star_entity_where_id(entity_name, entity_id)
+        print(results)
 
         if entity_name == "Song" or entity_name == "Album":
             current_artist = get_artist_name_from_id(get_current_artist_id_from_table(entity_name, entity_id))
@@ -393,5 +394,5 @@ def capitalize_entity_name(original_entity_name):
 ##################################################
 
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 58765))
+    port = int(os.environ.get('PORT', 58766))
     app.run(port=port, debug=True)

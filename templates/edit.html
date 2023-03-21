@@ -172,7 +172,7 @@
             {% elif key[-4:] == "body" %}
             <!-- Creates a textarea for review bodies when editing album_reviews and song_reviews -->
             <br>
-            <textarea name="{{ key }}" id="{{ key }}" class="review_body">{{ entity[key] }}</textarea>
+            <textarea name="{{ key }}" id="{{ key }}" class="review_body">{% if entity[key] != None %}{{ entity[key] }}{% endif %}</textarea>
             <br>
             {% endif %}
 
