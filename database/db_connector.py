@@ -1,4 +1,4 @@
-# This file is based on the Flask tutorial from CS 340 (https://github.com/osu-cs340-ecampus/flask-starter-app)
+# This file is based on the Flask tutorial from Oregon State University's CS 340 Flask Starter Guide (https://github.com/osu-cs340-ecampus/flask-starter-app)
 
 import MySQLdb
 import os
