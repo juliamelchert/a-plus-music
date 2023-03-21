@@ -24,19 +24,19 @@ def get_album_id_from_album_review_id(album_review_id) -> int:
 
 def add_album_review_with_user(user_id, album_id, album_rating, album_review_body) -> None:
     """ Inserts a new Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
-    db.execute_query(f"INSERT INTO Album_Reviews (user_id, album_id, album_rating, album_review_body) VALUES ('{user_id}', '{album_id}', '{album_rating}', '{album_review_body}')")
+    db.execute_query(f"INSERT INTO Album_Reviews (user_id, album_id, album_rating, album_review_body) VALUES ({user_id}, {album_id}, (%s), (%s))", (album_rating, album_review_body))
 
 def add_album_review_without_user(album_id, album_rating, album_review_body) -> None:
     """ Inserts a new Album_Review entity with the given album_id, album_rating, and album_review_body """
-    db.execute_query(f"INSERT INTO Album_Reviews (album_id, album_rating, album_review_body) VALUES ('{album_id}', '{album_rating}', '{album_review_body}')")
+    db.execute_query(f"INSERT INTO Album_Reviews (album_id, album_rating, album_review_body) VALUES ({album_id}, (%s), (%s))", (album_rating, album_review_body))
 
 def edit_album_review_with_user(user_id, album_id, album_rating, album_review_body, album_review_id) -> None:
     """ Updates an existing Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
-    db.execute_query(f"UPDATE Album_Reviews SET user_id = '{user_id}', album_id = '{album_id}', album_rating = '{album_rating}', album_review_body = '{album_review_body}' WHERE album_review_id = {album_review_id}")
+    db.execute_query(f"UPDATE Album_Reviews SET user_id = (%s), album_id = (%s), album_rating = (%s), album_review_body = (%s) WHERE album_review_id = {album_review_id}", (user_id, album_id, album_rating, album_review_body))
 
 def edit_album_review_without_user(album_id, album_rating, album_review_body, album_review_id) -> None:
     """ Updates an existing Album_Review entity with the given album_id, album_rating, and album_review_body """
-    db.execute_query(f"UPDATE Album_Reviews SET user_id = NULL, album_id = '{album_id}', album_rating = '{album_rating}', album_review_body = '{album_review_body}' WHERE album_review_id = {album_review_id}")
+    db.execute_query(f"UPDATE Album_Reviews SET user_id = NULL, album_id = (%s), album_rating = (%s), album_review_body = (%s) WHERE album_review_id = {album_review_id}", (album_id, album_rating, album_review_body))
 
 def delete_album_review(album_review_id) -> None:
     """ Deletes an Album_Review entity using its unique album_review_id """
@@ -61,19 +61,19 @@ def get_song_id_from_song_review_id(song_review_id) -> int:
 
 def add_song_review_with_user(user_id, song_id, song_rating, song_review_body) -> None:
     """ Inserts a new Song_Reviews entity with the given user_id, song_id, song_rating, and song_review_body """
-    db.execute_query(f"INSERT INTO Song_Reviews (user_id, song_id, song_rating, song_review_body) VALUES ('{user_id}', '{song_id}', '{song_rating}', '{song_review_body}')")
+    db.execute_query(f"INSERT INTO Song_Reviews (user_id, song_id, song_rating, song_review_body) VALUES ({user_id}, {song_id}, (%s), (%s))", (song_rating, song_review_body))
 
 def add_song_review_without_user(song_id, song_rating, song_review_body) -> None:
     """ Inserts a new Song_Reviews entity with the given song_id, song_rating, and song_review_body """
-    db.execute_query(f"INSERT INTO Song_Reviews (song_id, song_rating, song_review_body) VALUES ('{song_id}', '{song_rating}', '{song_review_body}')")
+    db.execute_query(f"INSERT INTO Song_Reviews (song_id, song_rating, song_review_body) VALUES ({song_id}, (%s), (%s))", (song_rating, song_review_body))
 
 def edit_song_review_with_user(user_id, song_id, song_rating, song_review_body, song_review_id) -> None:
     """ Updates an existing Song_Review entity with the given user_id, song_id, song_rating, and song_review_body """
-    db.execute_query(f"UPDATE Song_Reviews SET user_id = '{user_id}', song_id = '{song_id}', song_rating = '{song_rating}', song_review_body = '{song_review_body}' WHERE song_review_id = {song_review_id}")
+    db.execute_query(f"UPDATE Song_Reviews SET user_id = (%s), song_id = (%s), song_rating = (%s), song_review_body = (%s) WHERE song_review_id = {song_review_id}", (user_id, song_id, song_rating, song_review_body))
 
 def edit_song_review_without_user(song_id, song_rating, song_review_body, song_review_id) -> None:
     """ Updates an existing Song_Review entity with the given song_id, song_rating, and song_review_body """
-    db.execute_query(f"UPDATE Song_Reviews SET user_id = NULL, song_id = '{song_id}', song_rating = '{song_rating}', song_review_body = '{song_review_body}' WHERE song_review_id = {song_review_id}")
+    db.execute_query(f"UPDATE Song_Reviews SET user_id = NULL, song_id = (%s), song_rating = (%s), song_review_body = (%s) WHERE song_review_id = {song_review_id}", (song_id, song_rating, song_review_body))
 
 def delete_song_review(song_review_id) -> None:
     """ Deletes an Song_Review entity using its unique song_review_id """
@@ -113,7 +113,7 @@ def get_album_titles():
 
 def get_album_id_from_title(title) -> int:
     """ Returns the album_id that corresponds to the given album_title """
-    return int(db.execute_query(f"SELECT album_id FROM Albums WHERE album_title = ('{title}')").fetchone()['album_id'])
+    return int(db.execute_query(f"SELECT album_id FROM Albums WHERE album_title = ((%s))", (title,)).fetchone()['album_id'])
 
 def get_album_title_from_id(album_id) -> str:
     """ Returns the album_title that corresponds to the given album_id """
@@ -121,11 +121,11 @@ def get_album_title_from_id(album_id) -> str:
 
 def add_album(artist_id, album_title, album_genre) -> None:
     """ Inserts a new Album entity with the given artist_id, album_title, and album_genre """
-    db.execute_query(f"INSERT INTO Albums (artist_id, album_title, album_genre) VALUES ('{artist_id}', '{album_title}', '{album_genre}')")
+    db.execute_query(f"INSERT INTO Albums (artist_id, album_title, album_genre) VALUES ('{artist_id}', (%s), (%s))", (album_title, album_genre))
 
 def edit_album(artist_id, album_title, album_genre, album_id) -> None:
     """ Updates the artist_id, album_title, and album_genre of the Album with the given album_id """
-    db.execute_query(f"UPDATE Albums SET artist_id = '{artist_id}', album_title = '{album_title}', album_genre = '{album_genre}' WHERE album_id = {album_id}")
+    db.execute_query(f"UPDATE Albums SET artist_id = '{artist_id}', album_title = (%s), album_genre = (%s) WHERE album_id = {album_id}", (album_title, album_genre))
 
 def delete_album(album_id) -> None:
     """ Deletes an Album entity using its unique album_id """
@@ -201,7 +201,7 @@ def get_artist_names():
 
 def get_artist_id_from_name(name) -> int:
     """ Returns the corresponding artist_id given a name """
-    return int(db.execute_query(f"SELECT artist_id FROM Artists WHERE name = ('{name}')").fetchone()['artist_id'])
+    return int(db.execute_query(f"SELECT artist_id FROM Artists WHERE name = ((%s))", (name,)).fetchone()['artist_id'])
 
 def get_artist_name_from_id(artist_id) -> str:
     """ Returns the corresponding name value for the given artist_id """
@@ -213,11 +213,11 @@ def get_current_artist_id_from_table(table_name, entity_id):
 
 def add_artist(name) -> None:
     """ Inserts a new Artist entity with the given name """
-    db.execute_query(f"INSERT INTO Artists (name) VALUES ('{name}')")
+    db.execute_query(f"INSERT INTO Artists (name) VALUES ((%s))", (name,))
 
 def edit_artist(name, artist_id) -> None:
     """ Updates the name of the Artist with the given artist_id """
-    db.execute_query(f"UPDATE Artists SET name = '{name}' WHERE artist_id = {artist_id}")
+    db.execute_query(f"UPDATE Artists SET name = (%s) WHERE artist_id = {artist_id}", (name,))
 
 def delete_artist(artist_id) -> None:
     """ Deletes an Artist entity using its unique artist_id """
@@ -229,8 +229,8 @@ def check_artist_exists(name) -> int:
     Checks if an Artist with the given name already exists.
     Returns 0 if it does not exist, and returns 1 if it does exist.
     """
-    query = f"SELECT EXISTS(SELECT * FROM Artists WHERE name = '{name}')"
-    return list((db.execute_query(query).fetchone()).values())[0]
+    query = f"SELECT EXISTS(SELECT * FROM Artists WHERE name = (%s))"
+    return list((db.execute_query(query, (name,)).fetchone()).values())[0]
 
 ##################################################
 #                                                #
@@ -250,7 +250,7 @@ def get_song_titles():
 
 def get_song_id_from_title(title) -> int:
     """ Returns the corresponding song_id given a song_title """
-    return int(db.execute_query(f"SELECT song_id FROM Songs WHERE song_title = ('{title}')").fetchone()['song_id'])
+    return int(db.execute_query(f"SELECT song_id FROM Songs WHERE song_title = (%s)", (title,)).fetchone()['song_id'])
 
 def get_song_title_from_id(song_id) -> str:
     """ Returns the corresponding song_title given a song_id """
@@ -258,15 +258,15 @@ def get_song_title_from_id(song_id) -> str:
 
 def get_song_id_from_title_and_artist(title, artist_id) -> int:
     """ Returns the corresponding song_id given a song_title and artist"""
-    return int(db.execute_query(f"SELECT song_id FROM Songs WHERE song_title = '{title}' AND artist_id = '{artist_id}'").fetchone()['song_id'])
+    return int(db.execute_query(f"SELECT song_id FROM Songs WHERE song_title = (%s) AND artist_id = '{artist_id}'", (title,)).fetchone()['song_id'])
 
 def add_song(artist_id, song_title, song_genre) -> None:
     """ Inserts a new Song entity with the given artist_id, song_title, and song_genre """
-    db.execute_query(f"INSERT INTO Songs (artist_id, song_title, song_genre) VALUES ('{artist_id}', '{song_title}', '{song_genre}')")
+    db.execute_query(f"INSERT INTO Songs (artist_id, song_title, song_genre) VALUES ('{artist_id}', (%s), (%s))", (song_title, song_genre))
 
 def edit_song(artist_id, song_title, song_genre, song_id) -> None:
     """ Updates the artist_id, song_title, and song_genre of the Song with the given song_id """
-    db.execute_query(f"UPDATE Songs SET artist_id = '{artist_id}', song_title = '{song_title}', song_genre = '{song_genre}' WHERE song_id = {song_id}")
+    db.execute_query(f"UPDATE Songs SET artist_id = '{artist_id}', song_title = (%s), song_genre = (%s) WHERE song_id = {song_id}", (song_title, song_genre))
 
 def delete_song(song_id) -> None:
     """ Deletes a Song entity using its unique song_id """
@@ -299,15 +299,15 @@ def get_email_from_user_id(user_id) -> str:
 
 def get_user_id_from_username(username) -> int:
     """ Returns the corresponding user_id value for the given username """
-    return int(db.execute_query(f"SELECT user_id FROM Users WHERE username = '{username}'").fetchone()['user_id'])
+    return int(db.execute_query(f"SELECT user_id FROM Users WHERE username = (%s)", (username,)).fetchone()['user_id'])
 
 def add_user(username, email) -> None:
     """ Inserts a new User entity with the given username and email """
-    db.execute_query(f"INSERT INTO Users (username, email) VALUES ('{username}', '{email}')")
+    db.execute_query(f"INSERT INTO Users (username, email) VALUES ((%s), (%s))", (username, email))
 
 def edit_user(username, email, user_id) -> None:
     """ Updates the username and email of the User with the given user_id """
-    db.execute_query(f"UPDATE Users SET username = '{username}', email = '{email}' WHERE user_id = {user_id}")
+    db.execute_query(f"UPDATE Users SET username = (%s), email = (%s) WHERE user_id = {user_id}", (username, email))
 
 def delete_user(user_id) -> None:
     """ Deletes a User entity using its unique user_id """
@@ -318,16 +318,16 @@ def check_user_username_exists(username) -> int:
     Checks if a User with the given username already exists.
     Returns 0 if it does not exist, and returns 1 if it does exist.
     """
-    query = f"SELECT EXISTS(SELECT * FROM Users WHERE username = '{username}')"
-    return list((db.execute_query(query).fetchone()).values())[0]
+    query = f"SELECT EXISTS(SELECT * FROM Users WHERE username = (%s))"
+    return list((db.execute_query(query, (username,)).fetchone()).values())[0]
 
 def check_user_email_exists(email) -> int:
     """
     Checks if a User with the given email already exists.
     Returns 0 if it does not exist, and returns 1 if it does exist.
     """
-    query = f"SELECT EXISTS(SELECT * FROM Users WHERE email = '{email}')"
-    return list((db.execute_query(query).fetchone()).values())[0]
+    query = f"SELECT EXISTS(SELECT * FROM Users WHERE email = (%s))"
+    return list((db.execute_query(query, (email,)).fetchone()).values())[0]
 
 ##################################################
 #                                                #
@@ -339,7 +339,7 @@ def get_star_entity(entity_name):
     """  """
     return db.execute_query(f"SELECT * FROM {entity_name.capitalize()}s;").fetchall()
 
-def get_entity_columns(entity_name):
+def get_entity_columns(entity_name) -> tuple:
     """ Returns the names of all of the columns in the given entity's table """
     return tuple(column['Field'] for column in db.execute_query(f"DESCRIBE {entity_name.capitalize()}s").fetchall())
 

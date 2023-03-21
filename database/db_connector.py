@@ -1,3 +1,5 @@
+# This file is based on the Flask tutorial from CS 340 (https://github.com/osu-cs340-ecampus/flask-starter-app)
+
 import MySQLdb
 import os
 from dotenv import load_dotenv, find_dotenv
@@ -20,10 +22,10 @@ def connect_to_database(host = host, user = user, passwd = passwd, db = db):
 
 def execute_query(query = None, query_params = ()):
     '''
-    executes a given SQL query on the given db connection and returns a Cursor object
-    db_connection: a MySQLdb connection object created by connect_to_database()
-    query: string containing SQL query
-    returns: A Cursor object as specified at https://www.python.org/dev/peps/pep-0249/#cursor-objects.
+    Executes a given SQL query on the given db connection and returns a Cursor object
+        db_connection: a MySQLdb connection object created by connect_to_database()
+        query: string containing SQL query
+        returns: A Cursor object as specified at https://www.python.org/dev/peps/pep-0249/#cursor-objects.
     You need to run .fetchall() or .fetchone() on that object to actually acccess the results.
     '''
     db_connection = connect_to_database()
