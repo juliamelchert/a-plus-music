@@ -5,7 +5,7 @@ SET AUTOCOMMIT = 0;
 
 -- CREATING TABLES
 -- Create Users
-CREATE OR REPLACE TABLE Users (
+CREATE TABLE Users (
     user_id int NOT NULL AUTO_INCREMENT,
     username varchar(45) UNIQUE NOT NULL,
     email varchar(50) UNIQUE NOT NULL,
@@ -13,14 +13,14 @@ CREATE OR REPLACE TABLE Users (
 );
 
 -- Create Artists
-CREATE OR REPLACE TABLE Artists (
+CREATE TABLE Artists (
     artist_id int NOT NULL AUTO_INCREMENT,
     name varchar(45) NOT NULL UNIQUE,
     PRIMARY KEY (artist_id)
 );
 
 -- Create Albums
-CREATE OR REPLACE TABLE Albums (
+CREATE TABLE Albums (
     album_id int NOT NULL AUTO_INCREMENT,
     artist_id int NOT NULL,
     avg_album_rating decimal(2, 1) NOT NULL DEFAULT 0.0,
@@ -31,7 +31,7 @@ CREATE OR REPLACE TABLE Albums (
 );
 
 -- Create Songs table
-CREATE OR REPLACE TABLE Songs (
+CREATE TABLE Songs (
     song_id int NOT NULL AUTO_INCREMENT,
     artist_id int NOT NULL,
     avg_song_rating decimal(2, 1) NOT NULL DEFAULT 0.0,
@@ -42,7 +42,7 @@ CREATE OR REPLACE TABLE Songs (
 );
 
 -- Create Song_Review table
-CREATE OR REPLACE TABLE Song_Reviews (
+CREATE TABLE Song_Reviews (
     song_review_id int NOT NULL AUTO_INCREMENT,
     user_id int,
     song_id int NOT NULL,
@@ -54,7 +54,7 @@ CREATE OR REPLACE TABLE Song_Reviews (
 );
 
 -- Create Album_Reviews table
-CREATE OR REPLACE TABLE Album_Reviews (
+CREATE TABLE Album_Reviews (
     album_review_id int NOT NULL AUTO_INCREMENT,
     user_id int,
     album_id int NOT NULL,
@@ -66,7 +66,7 @@ CREATE OR REPLACE TABLE Album_Reviews (
 );
 
 -- Create Albums_Songs intersection table
-CREATE OR REPLACE TABLE Albums_Songs (
+CREATE TABLE Albums_Songs (
     albums_song_id int NOT NULL AUTO_INCREMENT,
     album_id int NOT NULL,
     song_id int NOT NULL,
@@ -104,27 +104,27 @@ INSERT INTO Users (username, email) VALUES
 
 
 -- Insert Dummy Albums Data
-INSERT INTO Albums (artist_id, album_title, album_genre) VALUES
-((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Even Worse', 'Comedy'),
-((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Light as a Feather', 'Jazz Fusion'),
-((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'The Dark Side of the Moon', 'Prog. Rock'),
-((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'The Best of Earth, Wind & Fire Vol. 1', 'R&B'),
-((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Thriller', 'Pop'),
-((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'September (Single)', 'R&B');
+INSERT INTO Albums (artist_id, album_title, album_genre, avg_album_rating) VALUES
+((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Even Worse', 'Comedy', 4.0),
+((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Light as a Feather', 'Jazz Fusion', 4.0),
+((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'The Dark Side of the Moon', 'Prog. Rock', 5.0),
+((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'The Best of Earth, Wind & Fire Vol. 1', 'R&B', 5.0),
+((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Thriller', 'Pop', 5.0),
+((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'September (Single)', 'R&B', 5.0);
 
 
 -- Insert Dummy Songs Data
-INSERT INTO Songs (artist_id, song_title, song_genre) VALUES
-((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Thriller', 'Pop'),
-((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Beat It', 'Comedy'),
-((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'September', 'R&B'),
-((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'Fantasy', 'R&B'),
-((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'Time', 'Prog. Rock'),
-((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'Money', 'Prog. Rock'),
-((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Light as a Feather', 'Jazz Fusion'),
-((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Spain', 'Jazz Fusion'),
-((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Lasagna', 'Comedy'),
-((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Fat', 'Comedy');
+INSERT INTO Songs (artist_id, song_title, song_genre, avg_song_rating) VALUES
+((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Thriller', 'Pop', 5.0),
+((SELECT artist_id FROM Artists WHERE name = 'Michael Jackson'), 'Beat It', 'Comedy', 0.0),
+((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'September', 'R&B', 4.0),
+((SELECT artist_id FROM Artists WHERE name = 'Earth, Wind & Fire'), 'Fantasy', 'R&B', 0.0),
+((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'Time', 'Prog. Rock', 0.0),
+((SELECT artist_id FROM Artists WHERE name = 'Pink Floyd'), 'Money', 'Prog. Rock', 5.0),
+((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Light as a Feather', 'Jazz Fusion', 0.0),
+((SELECT artist_id FROM Artists WHERE name = 'Chick Corea and Return to Forever'), 'Spain', 'Jazz Fusion', 5.0),
+((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Lasagna', 'Comedy', 0.0),
+((SELECT artist_id FROM Artists WHERE name = '"Weird Al" Yankovic'), 'Fat', 'Comedy', 5.0);
 
 
 -- Insert Dummy Song_Reviews Data
@@ -229,37 +229,6 @@ UPDATE Albums SET avg_album_rating = (
     WHERE Album_Reviews.album_id = NEW.album_id
 )
 WHERE Albums.album_id = NEW.album_id;
-
-
--- For Loop to Update Albums
-DELIMITER //
-
-FOR i IN (SELECT album_id FROM Albums)
-DO
-    UPDATE Albums SET avg_album_rating = (
-        SELECT AVG(Album_rating) FROM Album_Reviews
-        WHERE Album_Reviews.album_id = i.album_id
-    )
-    WHERE Albums.album_id = i.album_id;
-END FOR;
-//
-
-DELIMITER ;
-
--- For Loop to Update Songs
-DELIMITER //
-
-FOR i IN (SELECT song_id FROM Songs)
-DO
-    UPDATE Songs SET avg_song_rating = (
-        SELECT AVG(song_rating) FROM Song_Reviews
-        WHERE Song_Reviews.song_id = i.song_id
-    )
-    WHERE Songs.song_id = i.song_id;
-END FOR;
-//
-
-DELIMITER ;
 
 -- SELECT * FROM Albums;
 -- SELECT * FROM Songs;
