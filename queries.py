@@ -25,22 +25,39 @@ def get_album_id_from_album_review_id(album_review_id) -> int:
 def add_album_review_with_user(user_id, album_id, album_rating, album_review_body) -> None:
     """ Inserts a new Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
     db.execute_query(f"INSERT INTO Album_Reviews (user_id, album_id, album_rating, album_review_body) VALUES ({user_id}, {album_id}, (%s), (%s))", (album_rating, album_review_body))
+    update_album_rating(album_id)
 
 def add_album_review_without_user(album_id, album_rating, album_review_body) -> None:
     """ Inserts a new Album_Review entity with the given album_id, album_rating, and album_review_body """
     db.execute_query(f"INSERT INTO Album_Reviews (album_id, album_rating, album_review_body) VALUES ({album_id}, (%s), (%s))", (album_rating, album_review_body))
+    update_album_rating(album_id)
 
 def edit_album_review_with_user(user_id, album_id, album_rating, album_review_body, album_review_id) -> None:
     """ Updates an existing Album_Review entity with the given user_id, album_id, album_rating, and album_review_body """
     db.execute_query(f"UPDATE Album_Reviews SET user_id = (%s), album_id = (%s), album_rating = (%s), album_review_body = (%s) WHERE album_review_id = {album_review_id}", (user_id, album_id, album_rating, album_review_body))
+    update_album_rating(album_id)
 
 def edit_album_review_without_user(album_id, album_rating, album_review_body, album_review_id) -> None:
     """ Updates an existing Album_Review entity with the given album_id, album_rating, and album_review_body """
     db.execute_query(f"UPDATE Album_Reviews SET user_id = NULL, album_id = (%s), album_rating = (%s), album_review_body = (%s) WHERE album_review_id = {album_review_id}", (album_id, album_rating, album_review_body))
+    update_album_rating(album_id)
 
 def delete_album_review(album_review_id) -> None:
     """ Deletes an Album_Review entity using its unique album_review_id """
+    album_id = get_album_id_from_album_review_id(album_review_id)
     db.execute_query(f"DELETE FROM Album_Reviews WHERE album_review_id = {album_review_id}")
+    update_album_rating(album_id)
+
+def update_album_rating(album_id) -> None:
+    """
+    Updates an album's avg_album_rating value based on all Album_Review entries for the Album with the given album_id.
+    Used in place of a MySQL trigger function.
+    """
+    db.execute_query("UPDATE Albums SET avg_album_rating = ("
+                    " SELECT AVG(album_rating) FROM Album_Reviews"
+                    f" WHERE Album_Reviews.album_id = {album_id}"
+                    " )"
+                    f" WHERE Albums.album_id = {album_id};") 
 
 ##### SONG REVIEWS ######
 def get_all_song_reviews():
@@ -62,22 +79,38 @@ def get_song_id_from_song_review_id(song_review_id) -> int:
 def add_song_review_with_user(user_id, song_id, song_rating, song_review_body) -> None:
     """ Inserts a new Song_Reviews entity with the given user_id, song_id, song_rating, and song_review_body """
     db.execute_query(f"INSERT INTO Song_Reviews (user_id, song_id, song_rating, song_review_body) VALUES ({user_id}, {song_id}, (%s), (%s))", (song_rating, song_review_body))
+    update_song_rating(song_id)
 
 def add_song_review_without_user(song_id, song_rating, song_review_body) -> None:
     """ Inserts a new Song_Reviews entity with the given song_id, song_rating, and song_review_body """
     db.execute_query(f"INSERT INTO Song_Reviews (song_id, song_rating, song_review_body) VALUES ({song_id}, (%s), (%s))", (song_rating, song_review_body))
+    update_song_rating(song_id)
 
 def edit_song_review_with_user(user_id, song_id, song_rating, song_review_body, song_review_id) -> None:
     """ Updates an existing Song_Review entity with the given user_id, song_id, song_rating, and song_review_body """
     db.execute_query(f"UPDATE Song_Reviews SET user_id = (%s), song_id = (%s), song_rating = (%s), song_review_body = (%s) WHERE song_review_id = {song_review_id}", (user_id, song_id, song_rating, song_review_body))
+    update_song_rating(song_id)
 
 def edit_song_review_without_user(song_id, song_rating, song_review_body, song_review_id) -> None:
     """ Updates an existing Song_Review entity with the given song_id, song_rating, and song_review_body """
     db.execute_query(f"UPDATE Song_Reviews SET user_id = NULL, song_id = (%s), song_rating = (%s), song_review_body = (%s) WHERE song_review_id = {song_review_id}", (song_id, song_rating, song_review_body))
+    update_song_rating(song_id)
 
 def delete_song_review(song_review_id) -> None:
     """ Deletes an Song_Review entity using its unique song_review_id """
+    song_id = get_song_id_from_song_review_id(song_review_id)
     db.execute_query(f"DELETE FROM Song_Reviews WHERE song_review_id = {song_review_id}")
+    update_song_rating(song_id)
+
+def update_song_rating(song_id) -> None:
+    """
+    Updates a song's avg_song_rating value based on all Song_Review entries for the Song with the given song_id.
+    Used in place of a MySQL trigger function.
+    """
+    db.execute_query("UPDATE Songs SET avg_song_rating = ("
+                     " SELECT AVG(song_rating) FROM Song_Reviews"
+                    f" WHERE Song_Reviews.song_id = {song_id})"
+                    f" WHERE Songs.song_id = {song_id};")
 
 ##### BOTH REVIEWS #####
 def get_add_review_info(review_type) -> tuple:
